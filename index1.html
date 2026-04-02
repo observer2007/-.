@@ -1,0 +1,400 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>迴圈 - 互動敘事</title>
+    <style>
+        body {
+            background-color: #000;
+            color: #fff;
+            font-family: 'Courier New', Courier, 'Microsoft JhengHei', monospace;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            overflow: hidden;
+            line-height: 1.8;
+        }
+
+        #game-container {
+            width: 85%;
+            max-width: 700px;
+            text-align: center;
+        }
+
+        .hidden { display: none !important; }
+
+        h1.main-title {
+            font-size: 5rem;
+            letter-spacing: 20px;
+            margin-bottom: 50px;
+            font-weight: bold;
+        }
+
+        input[type="text"] {
+            background: transparent;
+            border: none;
+            border-bottom: 2px solid #fff;
+            color: #fff;
+            font-size: 1.5rem;
+            padding: 10px;
+            width: 300px;
+            text-align: center;
+            outline: none;
+        }
+
+        .blue-btn {
+            color: #3498db;
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            text-decoration: underline;
+            padding: 10px 20px;
+            margin-top: 20px;
+        }
+
+        .error-msg {
+            color: #ff4d4d;
+            height: 30px;
+            margin-top: 10px;
+        }
+
+        .content-box {
+            font-size: 1.2rem;
+            text-align: left;
+            min-height: 200px;
+            white-space: pre-wrap;
+        }
+
+        /* 淺灰色敘述文字樣式 */
+        .narrator-gray {
+            color: #a0a0a0; /* 淺灰色 */
+            font-style: italic;
+            font-size: 1.1rem;
+            margin-bottom: 20px;
+            text-align: left;
+        }
+
+        .blue-link {
+            color: #3498db;
+            text-decoration: underline;
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        .vertical-list {
+            list-style: none;
+            padding: 0;
+            text-align: left;
+            font-size: 1.4rem;
+        }
+
+        .vertical-list li {
+            margin: 25px 0;
+            cursor: pointer;
+        }
+
+        .vertical-list li:hover {
+            color: #3498db;
+        }
+
+        .fixed-bottom-nav {
+            margin-top: 40px;
+            border-top: 1px dashed #333;
+            padding-top: 10px;
+        }
+
+        /* 對話氣泡樣式 */
+        .chat-container {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            padding: 10px;
+            max-height: 350px;
+            overflow-y: auto;
+            margin-bottom: 20px;
+        }
+
+        .bubble {
+            max-width: 85%;
+            padding: 12px 18px;
+            border-radius: 18px;
+            font-size: 1.1rem;
+            opacity: 0;
+            transform: translateY(10px);
+            animation: bubbleAppear 0.4s forwards ease-out;
+        }
+
+        @keyframes bubbleAppear {
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .player-bubble { align-self: flex-end; background-color: #3498db; color: white; border-bottom-right-radius: 2px; }
+        .boss-bubble { align-self: flex-start; background-color: #333; color: #fff; border-bottom-left-radius: 2px; }
+        .dialog-option { display: block; width: 100%; text-align: right; color: #3498db; cursor: pointer; margin: 10px 0; text-decoration: underline; font-size: 1.1rem; }
+    </style>
+</head>
+<body>
+
+<div id="game-container">
+    <div id="page-1">
+        <h1 class="main-title">迴圈</h1>
+        <div class="input-area">
+            <p>請輸入觀測者姓名：</p>
+            <input type="text" id="user-name" autocomplete="off">
+            <div id="name-error" class="error-msg"></div>
+            <button class="blue-btn" onclick="startGame()">[ 進入迴圈 ]</button>
+        </div>
+    </div>
+
+    <div id="story-container" class="hidden">
+        <div id="text-display" class="content-box"></div>
+        <div id="hint-area" class="hidden" style="margin-top: 30px; color: #666; font-size: 0.9rem;">請點選文中藍色字體</div>
+        <div id="story-nav" class="fixed-bottom-nav hidden">
+            <button class="blue-btn" onclick="loadPageA()">[ 返回主頁 ]</button>
+        </div>
+    </div>
+
+    <div id="file-page" class="hidden">
+        <p style="font-size: 1.5rem;">檔案鎖定、需要 4 位數密碼</p>
+        <input type="text" id="password-input" maxlength="4" placeholder="---" style="letter-spacing: 10px;">
+        <div id="pw-error" class="error-msg"></div>
+        <button class="blue-btn" onclick="checkPassword()">[ 驗證 ]</button>
+        <div class="fixed-bottom-nav">
+            <button class="blue-btn" onclick="loadPageA()">[ 返回主頁 ]</button>
+        </div>
+    </div>
+
+    <div id="page-a" class="hidden">
+        <ul class="vertical-list">
+            <li onclick="goToEncryptedFile()">📁 『給讀者』檔案</li>
+            <li onclick="showPhoto()">📱 斯烏比莫的照片貼文</li>
+            <li id="cafe-link" class="hidden" onclick="enterCafeMain()">📍 單結咖啡廳</li>
+        </ul>
+    </div>
+
+    <div id="cafe-main" class="hidden">
+        <h2 style="letter-spacing: 5px;">📍 單結咖啡廳</h2>
+        <div id="cafe-intro-text" class="narrator-gray"></div>
+        <ul class="vertical-list">
+            <li onclick="goToCafeChat()">👨‍🍳 詢問老闆</li>
+            <li onclick="goToCafeMenu()">📜 查看菜單</li>
+            <li id="table-opt" class="hidden" onclick="investigateTable()">☕ 調查桌子</li>
+        </ul>
+        <div class="fixed-bottom-nav">
+            <button class="blue-btn" onclick="loadPageA()">[ 返回主頁 ]</button>
+        </div>
+    </div>
+
+    <div id="cafe-chat-page" class="hidden">
+        <h3>👨‍🍳 與老闆對話</h3>
+        <div id="boss-desc" class="narrator-gray"></div>
+        <div id="chat-box" class="chat-container"></div>
+        <div id="dialog-options-area"></div>
+        <div class="fixed-bottom-nav">
+            <button class="blue-btn" onclick="enterCafeMain()">[ 返回咖啡廳主頁 ]</button>
+        </div>
+    </div>
+
+    <div id="cafe-menu-page" class="hidden">
+        <h3>📜 店內菜單</h3>
+        <ul class="vertical-list" style="text-align: center;">
+            <li>抹茶 .......... 85元</li>
+            <li>布朗尼 ........ 75元</li>
+            <li style="color: #e67e22;">★ 續杯優惠 5 折</li>
+        </ul>
+        <div class="fixed-bottom-nav">
+            <button class="blue-btn" onclick="enterCafeMain()">[ 返回咖啡廳主頁 ]</button>
+        </div>
+    </div>
+</div>
+
+<script>
+    let userName = "";
+    let currentPage = 1;
+    let currentParaIndex = 0;
+    let typeTimeout;
+    let hasViewedPhoto = false;
+    let hasAskedBoss = false;
+
+    const scripts = {
+        2: ["「斯烏比莫，知名懸疑作家，原定今日出版新書《迴圈》。", "身為頭號粉絲，你從消息公布時就開始期待，但從十天前起，他的社群帳號停止更新，即便到了出版日也毫無消息。」"],
+        3: ["「你焦慮地不斷重新整理頁面。", "突然間，斯烏比莫的社群帳號裡，所有公開貼文被清空...", "只留下一張在咖啡廳的照片貼文，以及一個名為 <span class='blue-link' onclick='goToEncryptedFile()'>『給讀者』</span> 的加密檔案。」"],
+        "photo": ["這是一張斯烏比莫在咖啡廳的照片。", "照片中，斯烏比莫坐在窗邊，桌上放著一本泛黃的筆記本與厚厚的草稿。", "照片下方標記著一個地點：單結咖啡廳。"]
+    };
+
+    function startGame() {
+        userName = document.getElementById('user-name').value.trim();
+        if (userName === "") { document.getElementById('name-error').innerText = "請輸入名字"; return; }
+        document.getElementById('page-1').classList.add('hidden');
+        loadPage(2);
+    }
+
+    function loadPage(pageNumber) {
+        currentPage = pageNumber;
+        currentParaIndex = 0;
+        hideAll();
+        document.getElementById('story-container').classList.remove('hidden');
+        document.getElementById('text-display').innerHTML = "";
+        document.getElementById('hint-area').classList.add('hidden');
+        if (pageNumber === "photo") document.getElementById('story-nav').classList.remove('hidden');
+        startParagraph();
+    }
+
+    function startParagraph() {
+        const paragraphs = scripts[currentPage];
+        const target = document.getElementById('text-display');
+        const currentParaText = paragraphs[currentParaIndex];
+        let baseHTML = "";
+        for(let i=0; i < currentParaIndex; i++) { baseHTML += paragraphs[i] + "<br><br>"; }
+        let charIndex = 0;
+        function type() {
+            if (charIndex < currentParaText.length) {
+                if (currentParaText[charIndex] === '<') {
+                    let tagEnd = currentParaText.indexOf('>', charIndex);
+                    target.innerHTML = baseHTML + currentParaText.substring(0, tagEnd + 1);
+                    charIndex = tagEnd + 1;
+                } else {
+                    target.innerHTML = baseHTML + currentParaText.substring(0, charIndex + 1);
+                    charIndex++;
+                }
+                typeTimeout = setTimeout(type, 50); 
+            } else {
+                currentParaIndex++;
+                if (currentParaIndex < paragraphs.length) setTimeout(startParagraph, 1000);
+                else handlePageEnd();
+            }
+        }
+        type();
+    }
+
+    function handlePageEnd() {
+        if (currentPage === 2) { setTimeout(() => { document.getElementById('text-display').innerHTML = ""; loadPage(3); }, 1500); } 
+        else if (currentPage === 3) document.getElementById('hint-area').classList.remove('hidden');
+        else if (currentPage === "photo") hasViewedPhoto = true;
+    }
+
+    function hideAll() {
+        const ids = ['page-1', 'story-container', 'file-page', 'page-a', 'cafe-main', 'cafe-chat-page', 'cafe-menu-page'];
+        ids.forEach(id => document.getElementById(id).classList.add('hidden'));
+    }
+
+    function loadPageA() { hideAll(); document.getElementById('page-a').classList.remove('hidden'); if (hasViewedPhoto) document.getElementById('cafe-link').classList.remove('hidden'); }
+    function goToEncryptedFile() { hideAll(); document.getElementById('file-page').classList.remove('hidden'); }
+    function showPhoto() { loadPage("photo"); }
+
+    // --- 咖啡廳邏輯 ---
+    function enterCafeMain() {
+        hideAll();
+        document.getElementById('cafe-main').classList.remove('hidden');
+        if(hasAskedBoss) document.getElementById('table-opt').classList.remove('hidden');
+        
+        const intro = document.getElementById('cafe-intro-text');
+        if(intro.innerHTML === "") {
+            let text = "你推開門，風鈴清脆地響了一聲。店內木質的裝潢透著淡淡的咖啡香味。";
+            let i = 0;
+            function type() {
+                if (i < text.length) { intro.innerHTML += text.charAt(i); i++; setTimeout(type, 40); }
+            }
+            type();
+        }
+    }
+
+    function goToCafeMenu() { hideAll(); document.getElementById('cafe-menu-page').classList.remove('hidden'); }
+    
+    function goToCafeChat() {
+        hideAll();
+        document.getElementById('cafe-chat-page').classList.remove('hidden');
+        
+        // 顯示老闆敘述 (淺灰色)
+        const bossDesc = document.getElementById('boss-desc');
+        if(bossDesc.innerHTML === "") {
+            let descText = "老闆繫著深褐色的圍裙，正專注地擦拭一只晶瑩的高腳杯，神情溫和卻帶著一絲憂慮。";
+            let j = 0;
+            function typeDesc() {
+                if (j < descText.length) { bossDesc.innerHTML += descText.charAt(j); j++; setTimeout(typeDesc, 30); }
+            }
+            typeDesc();
+        }
+
+        if(document.getElementById('chat-box').innerHTML === "") {
+            showNextOption(1);
+        }
+    }
+
+    function addBubble(text, type) {
+        const chatBox = document.getElementById('chat-box');
+        const div = document.createElement('div');
+        div.className = `bubble ${type}-bubble`;
+        div.innerHTML = (type === 'boss' ? '👨‍🍳 : ' : '') + text;
+        chatBox.appendChild(div);
+        chatBox.scrollTop = chatBox.scrollHeight;
+    }
+
+    function addNarratorInChat(text) {
+        const chatBox = document.getElementById('chat-box');
+        const div = document.createElement('div');
+        div.className = 'narrator-gray'; // 在對話中也使用淺灰色敘述
+        div.style.fontSize = "0.95rem";
+        div.style.textAlign = "center";
+        chatBox.appendChild(div);
+        
+        let k = 0;
+        function type() {
+            if (k < text.length) { div.innerHTML += text.charAt(k); k++; setTimeout(type, 30); }
+        }
+        type();
+    }
+
+    function showNextOption(step) {
+        const area = document.getElementById('dialog-options-area');
+        area.innerHTML = "";
+        const opt = document.createElement('div');
+        opt.className = 'dialog-option';
+
+        if (step === 1) {
+            opt.innerText = "「請問您知道『斯烏比莫』這位作家嗎？」";
+            opt.onclick = () => {
+                opt.remove();
+                addBubble("請問您知道『斯烏比莫』這位作家嗎？", "player");
+                setTimeout(() => {
+                    addNarratorInChat("老闆停下手中擦拭杯子的動作，思索了片刻。");
+                    setTimeout(() => {
+                        addBubble("確實有位作家常坐那兒。他總是一坐就是一下午，安靜得像不存在一樣。", "boss");
+                        setTimeout(() => showNextOption(2), 1000);
+                    }, 1200);
+                }, 800);
+            };
+        } else if (step === 2) {
+            opt.innerText = "「那他最近有什麼反常的舉動嗎？」";
+            opt.onclick = () => {
+                opt.remove();
+                addBubble("那他最近有什麼反常的舉動嗎？", "player");
+                setTimeout(() => {
+                    addBubble("昨天他來時，一如往常點了布朗尼和抹茶拿鐵。在我製作續杯時，他消失了。餐點還冒著煙，座位上卻空無一人。", "boss");
+                    setTimeout(() => {
+                        addNarratorInChat("老闆指向與貼文中相同的靠窗座位。");
+                        hasAskedBoss = true;
+                    }, 1000);
+                }, 800);
+            };
+        }
+        area.appendChild(opt);
+    }
+
+    function investigateTable() {
+        alert("桌面上留著淡淡的咖啡漬，角落刻著一組模糊的數字...");
+    }
+
+    function checkPassword() {
+        const val = document.getElementById('password-input').value;
+        if (val === "0000") alert("驗證成功。");
+        else document.getElementById('pw-error').innerText = "密碼錯誤";
+    }
+</script>
+
+</body>
+</html>
