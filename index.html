@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>迴圈 - 互動敘事</title>
+    <style>
+        body {
+            background-color: #000;
+            color: #fff;
+            font-family: 'Courier New', Courier, 'Microsoft JhengHei', monospace;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            overflow: hidden;
+            line-height: 1.8;
+        }
+
+        #game-container {
+            width: 85%;
+            max-width: 700px;
+            text-align: center;
+        }
+
+        .hidden { display: none !important; }
+
+        h1.main-title {
+            font-size: 5rem;
+            letter-spacing: 20px;
+            margin-bottom: 50px;
+            font-weight: bold;
+        }
+
+        input[type="text"] {
+            background: transparent;
+            border: none;
+            border-bottom: 2px solid #fff;
+            color: #fff;
+            font-size: 1.5rem;
+            padding: 10px;
+            width: 300px;
+            text-align: center;
+            outline: none;
+        }
+
+        .blue-btn {
+            color: #3498db;
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            text-decoration: underline;
+            padding: 10px 20px;
+            margin-top: 20px;
+        }
+
+        .error-msg {
+            color: #ff4d4d;
+            height: 30px;
+            margin-top: 10px;
+        }
+
+        .content-box {
+            font-size: 1.2rem;
+            text-align: left;
+            min-height: 200px;
+            white-space: pre-wrap;
+        }
+
+        .blue-link {
+            color: #3498db;
+            text-decoration: underline;
+            cursor: pointer;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+
+<div id="game-container">
+    <div id="page-1">
+        <h1 class="main-title">迴圈</h1>
+        <div class="input-area">
+            <p style="font-size: 1.2rem;">請輸入觀測者姓名：</p>
+            <input type="text" id="user-name" autocomplete="off">
+            <div id="name-error" class="error-msg"></div>
+            <button class="blue-btn" onclick="startGame()">[ 進入迴圈 ]</button>
+        </div>
+    </div>
+
+    <div id="story-container" class="hidden">
+        <div id="text-display" class="content-box"></div>
+        <div id="hint-area" class="hidden" style="margin-top: 30px; color: #666; font-size: 0.9rem;">
+            請點選文中藍色字體
+        </div>
+    </div>
+</div>
+
+<script>
+    let userName = "";
+    let currentPage = 1;
+    let currentParaIndex = 0;
+    let typeTimeout;
+
+    const scripts = {
+        2: [
+            "「斯烏比莫，知名懸疑作家，原定今日出版新書《迴圈》。",
+            "身為頭號粉絲，你從消息公布時就開始期待，但從十天前起，他的社群帳號停止更新，即便到了出版日也毫無消息。」"
+        ],
+        3: [
+            "「你焦慮地不斷重新整理頁面。",
+            "突然間，斯烏比莫的社群帳號裡，所有公開貼文被清空...",
+            "只留下一張在咖啡廳的照片貼文，以及一個名為 <span class='blue-link' onclick='goToEncryptedFile()'>『給讀者』</span> 的加密檔案。」"
+        ]
+    };
+
+    function startGame() {
+        userName = document.getElementById('user-name').value.trim();
+        if (userName === "") {
+            document.getElementById('name-error').innerText = "請輸入名字";
+            return;
+        }
+        document.getElementById('page-1').classList.add('hidden');
+        loadPage(2);
+    }
+
+    function loadPage(pageNumber) {
+        currentPage = pageNumber;
+        currentParaIndex = 0;
+        document.getElementById('story-container').classList.remove('hidden');
+        document.getElementById('text-display').innerHTML = "";
+        startParagraph();
+    }
+
+    function startParagraph() {
+        const paragraphs = scripts[currentPage];
+        const target = document.getElementById('text-display');
+        const currentParaText = paragraphs[currentParaIndex];
+        
+        let baseHTML = "";
+        for(let i=0; i < currentParaIndex; i++) {
+            baseHTML += paragraphs[i] + "<br><br>";
+        }
+
+        let charIndex = 0;
+        function type() {
+            if (charIndex < currentParaText.length) {
+                if (currentParaText[charIndex] === '<') {
+                    let tagEnd = currentParaText.indexOf('>', charIndex);
+                    target.innerHTML = baseHTML + currentParaText.substring(0, tagEnd + 1);
+                    charIndex = tagEnd + 1;
+                } else {
+                    target.innerHTML = baseHTML + currentParaText.substring(0, charIndex + 1);
+                    charIndex++;
+                }
+                typeTimeout = setTimeout(type, 50); 
+            } else {
+                currentParaIndex++;
+                // 檢查是否還有下一段
+                if (currentParaIndex < paragraphs.length) {
+                    // 等待一秒後跑下一段
+                    setTimeout(startParagraph, 1000);
+                } else {
+                    // 本頁結束
+                    handlePageEnd();
+                }
+            }
+        }
+        type();
+    }
+
+    function handlePageEnd() {
+        if (currentPage === 2) {
+            // 第二頁結束，等待1秒後清空並跳轉第三頁
+            setTimeout(() => {
+                document.getElementById('text-display').innerHTML = "";
+                loadPage(3);
+            }, 1000);
+        } else if (currentPage === 3) {
+            // 第三頁結束，顯示提示
+            document.getElementById('hint-area').classList.remove('hidden');
+        }
+    }
+
+    function goToEncryptedFile() {
+        alert(userName + "，你點擊了加密檔案。接下來我們將進入 3 位數密碼輸入頁面。");
+    }
+</script>
+
+</body>
+</html>
