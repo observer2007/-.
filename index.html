@@ -5,136 +5,30 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>迴圈 - 互動敘事</title>
     <style>
-        body {
-            background-color: #000;
-            color: #fff;
-            font-family: 'Courier New', Courier, 'Microsoft JhengHei', monospace;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-            margin: 0;
-            overflow: hidden;
-            line-height: 1.8;
-        }
-
-        #game-container {
-            width: 85%;
-            max-width: 700px;
-            text-align: center;
-        }
-
+        body { background-color: #000; color: #fff; font-family: 'Courier New', Courier, 'Microsoft JhengHei', monospace; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; overflow: hidden; line-height: 1.8; transition: background-color 3s; }
+        #game-container { width: 85%; max-width: 700px; text-align: center; }
         .hidden { display: none !important; }
-
-        h1.main-title {
-            font-size: 5rem;
-            letter-spacing: 20px;
-            margin-bottom: 50px;
-            font-weight: bold;
-        }
-
-        input[type="text"] {
-            background: transparent;
-            border: none;
-            border-bottom: 2px solid #fff;
-            color: #fff;
-            font-size: 1.5rem;
-            padding: 10px;
-            width: 300px;
-            text-align: center;
-            outline: none;
-        }
-
-        .blue-btn {
-            color: #3498db;
-            background: none;
-            border: none;
-            font-size: 1.5rem;
-            cursor: pointer;
-            text-decoration: underline;
-            padding: 10px 20px;
-            margin-top: 20px;
-        }
-
-        .error-msg {
-            color: #ff4d4d;
-            height: 30px;
-            margin-top: 10px;
-        }
-
-        .content-box {
-            font-size: 1.2rem;
-            text-align: left;
-            min-height: 200px;
-            white-space: pre-wrap;
-        }
-
-        /* 淺灰色敘述文字樣式 */
-        .narrator-gray {
-            color: #a0a0a0; /* 淺灰色 */
-            font-style: italic;
-            font-size: 1.1rem;
-            margin-bottom: 20px;
-            text-align: left;
-        }
-
-        .blue-link {
-            color: #3498db;
-            text-decoration: underline;
-            cursor: pointer;
-            font-weight: bold;
-        }
-
-        .vertical-list {
-            list-style: none;
-            padding: 0;
-            text-align: left;
-            font-size: 1.4rem;
-        }
-
-        .vertical-list li {
-            margin: 25px 0;
-            cursor: pointer;
-        }
-
-        .vertical-list li:hover {
-            color: #3498db;
-        }
-
-        .fixed-bottom-nav {
-            margin-top: 40px;
-            border-top: 1px dashed #333;
-            padding-top: 10px;
-        }
-
-        /* 對話氣泡樣式 */
-        .chat-container {
-            display: flex;
-            flex-direction: column;
-            gap: 15px;
-            padding: 10px;
-            max-height: 350px;
-            overflow-y: auto;
-            margin-bottom: 20px;
-        }
-
-        .bubble {
-            max-width: 85%;
-            padding: 12px 18px;
-            border-radius: 18px;
-            font-size: 1.1rem;
-            opacity: 0;
-            transform: translateY(10px);
-            animation: bubbleAppear 0.4s forwards ease-out;
-        }
-
-        @keyframes bubbleAppear {
-            to { opacity: 1; transform: translateY(0); }
-        }
-
+        h1.main-title { font-size: 5rem; letter-spacing: 20px; margin-bottom: 20px; font-weight: bold; }
+        input[type="text"] { background: transparent; border: none; border-bottom: 2px solid #fff; color: #fff; font-size: 1.5rem; padding: 10px; width: 300px; text-align: center; outline: none; }
+        .blue-btn { color: #3498db; background: none; border: none; font-size: 1.5rem; cursor: pointer; text-decoration: underline; padding: 10px 20px; margin-top: 20px; }
+        .error-msg { color: #ff4d4d; height: 30px; margin-top: 10px; font-size: 1.1rem; }
+        .content-box { font-size: 1.2rem; text-align: left; min-height: 200px; white-space: pre-wrap; }
+        .narrator-gray { color: #a0a0a0; font-style: italic; font-size: 1.1rem; margin-bottom: 20px; text-align: left; }
+        .blue-link { color: #3498db; text-decoration: underline; cursor: pointer; font-weight: bold; }
+        .vertical-list { list-style: none; padding: 0; text-align: left; font-size: 1.4rem; }
+        .vertical-list li { margin: 25px 0; cursor: pointer; }
+        .vertical-list li:hover { color: #3498db; }
+        .fixed-bottom-nav { margin-top: 40px; border-top: 1px dashed #333; padding-top: 10px; }
+        .chat-container { display: flex; flex-direction: column; gap: 15px; padding: 10px; max-height: 350px; overflow-y: auto; margin-bottom: 20px; }
+        .bubble { max-width: 85%; padding: 12px 18px; border-radius: 18px; font-size: 1.1rem; opacity: 0; transform: translateY(10px); animation: bubbleAppear 0.4s forwards; }
+        @keyframes bubbleAppear { to { opacity: 1; transform: translateY(0); } }
         .player-bubble { align-self: flex-end; background-color: #3498db; color: white; border-bottom-right-radius: 2px; }
         .boss-bubble { align-self: flex-start; background-color: #333; color: #fff; border-bottom-left-radius: 2px; }
-        .dialog-option { display: block; width: 100%; text-align: right; color: #3498db; cursor: pointer; margin: 10px 0; text-decoration: underline; font-size: 1.1rem; }
+        .dialog-option { display: block; width: 100%; text-align: right; color: #3498db; cursor: pointer; margin: 10px 0; text-decoration: underline; }
+        .big-text { font-size: 2.2rem; font-weight: bold; color: #fff; line-height: 1.4; display: block; margin-top: 10px; }
+        .true-end-red { color: #ff3333; text-shadow: 0 0 10px #ff0000; }
+        #system-log { font-family: monospace; color: #00ff00; text-align: left; font-size: 1rem; line-height: 2; padding: 20px; border: 1px solid #00ff00; background: #050505; }
+        .red-opt { color: #ff4d4d !important; }
     </style>
 </head>
 <body>
@@ -150,6 +44,14 @@
         </div>
     </div>
 
+    <div id="page-trapped" class="hidden">
+        <h1 class="main-title">迴圈</h1>
+        <p>觀測者身分已鎖定：</p>
+        <input type="text" id="trapped-name-display" disabled style="color: #888; border-bottom: 2px solid #444;">
+        <div class="error-msg" style="color: #ff4d4d;">此名字已被佔用，且無法脫離。</div>
+        <button class="blue-btn" onclick="goToForm()">[ 結束遊戲 ]</button>
+    </div>
+
     <div id="story-container" class="hidden">
         <div id="text-display" class="content-box"></div>
         <div id="hint-area" class="hidden" style="margin-top: 30px; color: #666; font-size: 0.9rem;">請點選文中藍色字體</div>
@@ -160,71 +62,124 @@
 
     <div id="file-page" class="hidden">
         <p style="font-size: 1.5rem;">檔案鎖定、需要 4 位數密碼</p>
+        <div class="narrator-gray" style="text-align: center; margin-bottom: 10px;">起點</div>
         <input type="text" id="password-input" maxlength="4" placeholder="---" style="letter-spacing: 10px;">
         <div id="pw-error" class="error-msg"></div>
         <button class="blue-btn" onclick="checkPassword()">[ 驗證 ]</button>
-        <div class="fixed-bottom-nav">
-            <button class="blue-btn" onclick="loadPageA()">[ 返回主頁 ]</button>
-        </div>
+        <div class="fixed-bottom-nav"><button class="blue-btn" onclick="loadPageA()">[ 返回主頁 ]</button></div>
     </div>
 
     <div id="page-a" class="hidden">
         <ul class="vertical-list">
+            <li onclick="showPrologue()">📖 故事前情</li>
             <li onclick="goToEncryptedFile()">📁 『給讀者』檔案</li>
             <li onclick="showPhoto()">📱 斯烏比莫的照片貼文</li>
             <li id="cafe-link" class="hidden" onclick="enterCafeMain()">📍 單結咖啡廳</li>
+            <li id="giveup-link" class="hidden red-opt" onclick="confirmGiveUp()">❌ 太麻煩了，放棄搜索</li>
         </ul>
+    </div>
+
+    <div id="confirm-giveup-page" class="hidden">
+        <p style="font-size: 1.5rem;">你確定要放棄這一切搜索嗎？</p>
+        <div class="vertical-list" style="text-align: center;">
+            <li onclick="startGiveUpEnd()">[ 是，這不關我的事 ]</li>
+            <li onclick="loadPageA()">[ 否，我再想想 ]</li>
+        </div>
     </div>
 
     <div id="cafe-main" class="hidden">
         <h2 style="letter-spacing: 5px;">📍 單結咖啡廳</h2>
-        <div id="cafe-intro-text" class="narrator-gray"></div>
+        <div id="cafe-intro-text" class="narrator-gray visible"></div>
         <ul class="vertical-list">
             <li onclick="goToCafeChat()">👨‍🍳 詢問老闆</li>
             <li onclick="goToCafeMenu()">📜 查看菜單</li>
-            <li id="table-opt" class="hidden" onclick="investigateTable()">☕ 調查桌子</li>
+            <li id="table-opt" class="hidden" onclick="goToInvestigateTable()">☕ 調查桌子</li>
         </ul>
         <div class="fixed-bottom-nav">
             <button class="blue-btn" onclick="loadPageA()">[ 返回主頁 ]</button>
+            <br>
+            <button class="blue-btn red-opt" onclick="confirmGiveUp()">❌ 太麻煩了，放棄搜索</button>
         </div>
     </div>
 
-    <div id="cafe-chat-page" class="hidden">
-        <h3>👨‍🍳 與老闆對話</h3>
-        <div id="boss-desc" class="narrator-gray"></div>
-        <div id="chat-box" class="chat-container"></div>
-        <div id="dialog-options-area"></div>
-        <div class="fixed-bottom-nav">
-            <button class="blue-btn" onclick="enterCafeMain()">[ 返回咖啡廳主頁 ]</button>
-        </div>
+    <div id="table-investigate-page" class="hidden">
+        <div class="narrator-gray">桌上留著淡淡的咖啡漬，角落放著一張泛黃的草稿紙與一台筆記型電腦。</div>
+        <ul class="vertical-list">
+            <li onclick="openLaptopStep1()">💻 開啟筆記型電腦</li>
+            <li onclick="readDraft()">📖 翻閱草稿紙</li>
+        </ul>
+        <div class="fixed-bottom-nav visible"><button class="blue-btn" onclick="enterCafeMain()">[ 返回咖啡廳 ]</button></div>
+    </div>
+
+    <div id="laptop-page-1" class="hidden">
+        <p style="font-size: 1.2rem;">[ 系統鎖定 ] 請輸入 3 位數密碼</p>
+        <div class="narrator-gray" style="text-align: center;">於咖啡廳的欠款</div>
+        <input type="text" id="laptop-pw-1" maxlength="3" placeholder="***" style="letter-spacing: 5px; width: 150px;">
+        <div id="laptop-error-1" class="error-msg"></div>
+        <button class="blue-btn" onclick="checkLaptopPw1()">[ 登入 ]</button>
+        <div class="fixed-bottom-nav visible"><button class="blue-btn" onclick="goToInvestigateTable()">[ 返回 ]</button></div>
+    </div>
+
+    <div id="laptop-page-2" class="hidden">
+        <p style="font-size: 1.1rem; color: #3498db;">[ 安全驗證 ] 偵測到加密檔案：Observer.txt</p>
+        <div class="narrator-gray" style="text-align: center;">提示：這一切的「出口」是？</div>
+        <input type="text" id="laptop-pw-2" placeholder="請輸入一字密碼" style="width: 250px;">
+        <div id="laptop-error-2" class="error-msg"></div>
+        <button class="blue-btn" onclick="checkLaptopPw2()">[ 驗證 ]</button>
+        <div class="fixed-bottom-nav visible"><button class="blue-btn" onclick="goToInvestigateTable()">[ 返回 ]</button></div>
+    </div>
+
+    <div id="display-page" class="hidden">
+        <div id="display-title" style="font-size: 1.4rem; color: #3498db; margin-bottom: 20px; text-align: left;"></div>
+        <div id="display-content" class="content-box"></div>
+        <div id="display-nav" class="fixed-bottom-nav visible"><button class="blue-btn" onclick="goToInvestigateTable()">[ 返回 ]</button></div>
     </div>
 
     <div id="cafe-menu-page" class="hidden">
         <h3>📜 店內菜單</h3>
-        <ul class="vertical-list" style="text-align: center;">
-            <li>抹茶 .......... 85元</li>
-            <li>布朗尼 ........ 75元</li>
-            <li style="color: #e67e22;">★ 續杯優惠 5 折</li>
-        </ul>
-        <div class="fixed-bottom-nav">
-            <button class="blue-btn" onclick="enterCafeMain()">[ 返回咖啡廳主頁 ]</button>
+        <div style="display: flex; justify-content: space-around; text-align: left; font-size: 1.1rem;">
+            <ul style="list-style: none; padding: 0;"><li>錫蘭紅茶 .. 40</li><li>美式咖啡 .. 70</li><li>拿鐵 ...... 85</li><li>抹茶拿鐵 .. 90</li><li>焦糖瑪奇朵 .. 95</li></ul>
+            <ul style="list-style: none; padding: 0;"><li>肉桂捲 .... 70</li><li>檸檬塔 .... 70</li><li>布朗尼 .... 75</li><li>提拉米蘇 .. 80</li><li>起司蛋糕 .. 85</li></ul>
         </div>
+        <p style="color: #e67e22; margin-top: 20px; font-size: 1rem;">★ 凡點購飲品，續杯可享 5 折優惠（以價低者計）</p>
+        <div class="fixed-bottom-nav visible"><button class="blue-btn" onclick="enterCafeMain()">[ 返回咖啡廳 ]</button></div>
+    </div>
+
+    <div id="cafe-chat-page" class="hidden">
+        <h3>👨‍🍳 與老闆對話</h3>
+        <div id="boss-desc" class="narrator-gray visible"></div>
+        <div id="chat-box" class="chat-container"></div>
+        <div id="dialog-options-area"></div>
+        <div class="fixed-bottom-nav visible"><button class="blue-btn" onclick="enterCafeMain()">[ 返回咖啡廳主頁 ]</button></div>
+    </div>
+
+    <div id="system-page" class="hidden">
+        <div id="system-log"></div>
     </div>
 </div>
 
 <script>
     let userName = "";
-    let currentPage = 1;
-    let currentParaIndex = 0;
-    let typeTimeout;
-    let hasViewedPhoto = false;
+    let photoViewedOnce = false;
     let hasAskedBoss = false;
+    let hasReadDraft = false;
 
     const scripts = {
-        2: ["「斯烏比莫，知名懸疑作家，原定今日出版新書《迴圈》。", "身為頭號粉絲，你從消息公布時就開始期待，但從十天前起，他的社群帳號停止更新，即便到了出版日也毫無消息。」"],
-        3: ["「你焦慮地不斷重新整理頁面。", "突然間，斯烏比莫的社群帳號裡，所有公開貼文被清空...", "只留下一張在咖啡廳的照片貼文，以及一個名為 <span class='blue-link' onclick='goToEncryptedFile()'>『給讀者』</span> 的加密檔案。」"],
-        "photo": ["這是一張斯烏比莫在咖啡廳的照片。", "照片中，斯烏比莫坐在窗邊，桌上放著一本泛黃的筆記本與厚厚的草稿。", "照片下方標記著一個地點：單結咖啡廳。"]
+        "prologue": [
+            "斯烏比莫，知名懸疑作家，原定於 10 月 25 日出版新書《迴圈》。",
+            "身為頭號粉絲，你從消息公布時就開始期待。",
+            "但從十天前起，他的社群帳號停止更新，到了預定出版的日期依舊如此......",
+            "你焦慮地不斷重新整理頁面。突然間，斯烏比莫的社群帳號裡，所有公開貼文被清空，只留下一張在咖啡廳的照片貼文，以及一個加密檔案。"
+        ],
+        2: ["斯烏比莫，知名懸疑作家，原定於 10 月 25 日出版新書《迴圈》。", "身為頭號粉絲，你從消息公布時就開始期待。", "但從十天前起，他的社群帳號停止更新，到了預定出版的日期依舊如此......"],
+        3: ["你焦慮地不斷重新整理頁面。", "突然間，斯烏比莫的社群帳號裡，所有公開貼文被清空......", "只留下一張在咖啡廳的照片貼文，以及一個名為 <span class='blue-link' onclick='goToEncryptedFile()'>『給讀者』</span> 的加密檔案。"],
+        "photo": ["這是一張斯烏比莫在咖啡廳的照片。", "照片中，窗邊位置的桌上放著一張泛黃的草稿紙與一台筆記型電腦。", "照片下方標記著一個地點：單結咖啡廳。"],
+        "giveup": ["你最終還是放下了那份好奇。", "隨著瀏覽器分頁的關閉，那些神祕的訊息都成了視窗外逐漸模糊的殘影。", "斯烏比莫這個名字不再出現在你的關注清單，就像那場從未發生的出版計畫，消失在平凡的生活裡……"]
     };
+
+    function goToForm() {
+        window.location.href = "https://docs.google.com/forms/d/e/1FAIpQLScRON6Pka3pHX-zEz94MeTwVaT3GYWlMJHK5ouOSmagROqm7w/viewform?usp=dialog";
+    }
 
     function startGame() {
         userName = document.getElementById('user-name').value.trim();
@@ -233,96 +188,130 @@
         loadPage(2);
     }
 
-    function loadPage(pageNumber) {
-        currentPage = pageNumber;
-        currentParaIndex = 0;
+    function showPrologue() {
         hideAll();
         document.getElementById('story-container').classList.remove('hidden');
-        document.getElementById('text-display').innerHTML = "";
+        const target = document.getElementById('text-display');
+        target.innerHTML = scripts["prologue"].join("<br><br>");
+        document.getElementById('story-nav').classList.remove('hidden');
         document.getElementById('hint-area').classList.add('hidden');
-        if (pageNumber === "photo") document.getElementById('story-nav').classList.remove('hidden');
-        startParagraph();
     }
 
-    function startParagraph() {
-        const paragraphs = scripts[currentPage];
+    function loadPage(pageNumber) {
+        hideAll();
+        document.getElementById('story-container').classList.remove('hidden');
         const target = document.getElementById('text-display');
-        const currentParaText = paragraphs[currentParaIndex];
-        let baseHTML = "";
-        for(let i=0; i < currentParaIndex; i++) { baseHTML += paragraphs[i] + "<br><br>"; }
-        let charIndex = 0;
+        target.innerHTML = "";
+        document.getElementById('hint-area').classList.add('hidden');
+        document.getElementById('story-nav').classList.add('hidden');
+        const paragraphs = scripts[pageNumber];
+        
+        if (pageNumber === "photo" && photoViewedOnce) {
+            target.innerHTML = paragraphs.join("<br><br>");
+            document.getElementById('story-nav').classList.remove('hidden');
+            return;
+        }
+
+        let pIndex = 0;
         function type() {
-            if (charIndex < currentParaText.length) {
-                if (currentParaText[charIndex] === '<') {
-                    let tagEnd = currentParaText.indexOf('>', charIndex);
-                    target.innerHTML = baseHTML + currentParaText.substring(0, tagEnd + 1);
-                    charIndex = tagEnd + 1;
-                } else {
-                    target.innerHTML = baseHTML + currentParaText.substring(0, charIndex + 1);
-                    charIndex++;
+            if (pIndex < paragraphs.length) {
+                let charIdx = 0;
+                let currentPara = paragraphs[pIndex];
+                let baseHTML = target.innerHTML + (pIndex > 0 ? "<br><br>" : "");
+                function charLoop() {
+                    if (charIdx < currentPara.length) {
+                        if (currentPara[charIdx] === '<') {
+                            let end = currentPara.indexOf('>', charIdx);
+                            target.innerHTML = baseHTML + currentPara.substring(0, end + 1);
+                            charIdx = end + 1;
+                        } else { target.innerHTML = baseHTML + currentPara.substring(0, charIdx + 1); charIdx++; }
+                        setTimeout(charLoop, 40);
+                    } else { pIndex++; setTimeout(type, 1000); }
                 }
-                typeTimeout = setTimeout(type, 50); 
+                charLoop();
             } else {
-                currentParaIndex++;
-                if (currentParaIndex < paragraphs.length) setTimeout(startParagraph, 1000);
-                else handlePageEnd();
+                if (pageNumber === 2) setTimeout(() => loadPage(3), 1500);
+                else if (pageNumber === 3) document.getElementById('hint-area').classList.remove('hidden');
+                else if (pageNumber === "photo") { 
+                    photoViewedOnce = true; 
+                    setTimeout(() => document.getElementById('story-nav').classList.remove('hidden'), 1000); 
+                } else if (pageNumber === "giveup") {
+                    setTimeout(() => {
+                        document.getElementById('story-nav').classList.remove('hidden');
+                        document.getElementById('story-nav').innerHTML = `<button class="blue-btn" onclick="goToForm()">[ 結束遊戲 ]</button><button class="blue-btn" onclick="loadPageA()">[ 返回主頁 ]</button>`;
+                    }, 1000);
+                }
             }
         }
         type();
     }
 
-    function handlePageEnd() {
-        if (currentPage === 2) { setTimeout(() => { document.getElementById('text-display').innerHTML = ""; loadPage(3); }, 1500); } 
-        else if (currentPage === 3) document.getElementById('hint-area').classList.remove('hidden');
-        else if (currentPage === "photo") hasViewedPhoto = true;
-    }
-
     function hideAll() {
-        const ids = ['page-1', 'story-container', 'file-page', 'page-a', 'cafe-main', 'cafe-chat-page', 'cafe-menu-page'];
+        const ids = ['page-trapped', 'page-1', 'story-container', 'file-page', 'page-a', 'confirm-giveup-page', 'cafe-main', 'cafe-chat-page', 'cafe-menu-page', 'table-investigate-page', 'laptop-page-1', 'laptop-page-2', 'display-page', 'system-page'];
         ids.forEach(id => document.getElementById(id).classList.add('hidden'));
     }
 
-    function loadPageA() { hideAll(); document.getElementById('page-a').classList.remove('hidden'); if (hasViewedPhoto) document.getElementById('cafe-link').classList.remove('hidden'); }
+    function loadPageA() { 
+        hideAll(); 
+        document.getElementById('page-a').classList.remove('hidden'); 
+        if (photoViewedOnce) { 
+            document.getElementById('cafe-link').classList.remove('hidden'); 
+            document.getElementById('giveup-link').classList.remove('hidden'); 
+        } 
+        document.getElementById('story-nav').innerHTML = `<button class="blue-btn" onclick="loadPageA()">[ 返回主頁 ]</button>`;
+    }
+
+    function confirmGiveUp() { hideAll(); document.getElementById('confirm-giveup-page').classList.remove('hidden'); }
+    function startGiveUpEnd() { loadPage("giveup"); }
     function goToEncryptedFile() { hideAll(); document.getElementById('file-page').classList.remove('hidden'); }
     function showPhoto() { loadPage("photo"); }
+    function enterCafeMain() { hideAll(); document.getElementById('cafe-main').classList.remove('hidden'); if(hasAskedBoss) document.getElementById('table-opt').classList.remove('hidden'); }
+    function goToInvestigateTable() { hideAll(); document.getElementById('table-investigate-page').classList.remove('hidden'); }
+    function openLaptopStep1() { hideAll(); document.getElementById('laptop-page-1').classList.remove('hidden'); }
+    
+    function checkLaptopPw1() { 
+        if (document.getElementById('laptop-pw-1').value === "200") { 
+            hideAll(); 
+            document.getElementById('laptop-page-2').classList.remove('hidden'); 
+        } else { 
+            document.getElementById('laptop-error-1').innerText="密碼錯誤"; 
+        } 
+    }
+    
+    function checkLaptopPw2() {
+        if (document.getElementById('laptop-pw-2').value === "環") {
+            hideAll();
+            document.getElementById('display-page').classList.remove('hidden');
+            document.getElementById('display-title').innerText = "📄 檔案名稱：Observer.txt";
+            document.getElementById('display-content').innerHTML = "狀態： 已從加密磁區解鎖：<br><br>「親愛的觀測者，當你讀到這段文字時，說明你已經解開重重謎團。你的專注與執著遠超我的預期，這也意欲著，你正一步步踏入這個無法回頭的迴圈。<br><br>我一直在關注你。我看見你點開這個網頁、看見你輸入名字、看見你試圖在雜亂的草稿中尋找我的蹤跡。<br><br>關於最終的加密檔案，那是送給你的禮物，也是通往真相的唯一鑰匙。如果你在尋找那四位數的組合，請記住這段話：<br><br>『起點為我離開之日，終點是解開謎團的那天。<br>兩者相連，即是迴圈。』<br><br>不要停下你的觀測。<br>因為只有當你徹底看見我時，我才能……在另一面看見你。<br><br>—— 斯烏比莫」";
+        } else { document.getElementById('laptop-error-2').innerText="驗證失敗"; }
+    }
 
-    // --- 咖啡廳邏輯 ---
-    function enterCafeMain() {
+    function readDraft() {
         hideAll();
-        document.getElementById('cafe-main').classList.remove('hidden');
-        if(hasAskedBoss) document.getElementById('table-opt').classList.remove('hidden');
-        
-        const intro = document.getElementById('cafe-intro-text');
-        if(intro.innerHTML === "") {
-            let text = "你推開門，風鈴清脆地響了一聲。店內木質的裝潢透著淡淡的咖啡香味。";
-            let i = 0;
-            function type() {
-                if (i < text.length) { intro.innerHTML += text.charAt(i); i++; setTimeout(type, 40); }
-            }
+        document.getElementById('display-page').classList.remove('hidden');
+        document.getElementById('display-title').innerText = "📖 翻閱草稿紙";
+        const display = document.getElementById('display-content');
+        const content = "我在囯中，看見了被禁錮的無力，\n我在圜中，徒勞地繞著小徑周而復始。\n\n若要解脫，請直視那些被囚禁在核心的真相，\n當碎裂的靈魂重逢之時，那便是你應許的答案。";
+        if (hasReadDraft) { display.innerText = content; }
+        else {
+            display.innerText = ""; let i = 0;
+            function type() { if (i < content.length) { display.innerText += content.charAt(i); i++; setTimeout(type, 50); } else { hasReadDraft = true; } }
             type();
         }
     }
-
-    function goToCafeMenu() { hideAll(); document.getElementById('cafe-menu-page').classList.remove('hidden'); }
     
+    function goToCafeMenu() { hideAll(); document.getElementById('cafe-menu-page').classList.remove('hidden'); }
     function goToCafeChat() {
         hideAll();
         document.getElementById('cafe-chat-page').classList.remove('hidden');
-        
-        // 顯示老闆敘述 (淺灰色)
-        const bossDesc = document.getElementById('boss-desc');
-        if(bossDesc.innerHTML === "") {
-            let descText = "老闆繫著深褐色的圍裙，正專注地擦拭一只晶瑩的高腳杯，神情溫和卻帶著一絲憂慮。";
-            let j = 0;
-            function typeDesc() {
-                if (j < descText.length) { bossDesc.innerHTML += descText.charAt(j); j++; setTimeout(typeDesc, 30); }
-            }
-            typeDesc();
+        const desc = document.getElementById('boss-desc');
+        if(desc.innerHTML === "") {
+            let text = "老闆繫著深褐色的圍裙，正專注地擦拭一只晶瑩的高腳杯，神情溫和卻帶著一絲憂慮。";
+            let i = 0; function type() { if(i < text.length) { desc.innerHTML += text.charAt(i); i++; setTimeout(type, 30); } }
+            type();
         }
-
-        if(document.getElementById('chat-box').innerHTML === "") {
-            showNextOption(1);
-        }
+        if(document.getElementById('chat-box').innerHTML === "") showNextOption(1);
     }
 
     function addBubble(text, type) {
@@ -337,15 +326,10 @@
     function addNarratorInChat(text) {
         const chatBox = document.getElementById('chat-box');
         const div = document.createElement('div');
-        div.className = 'narrator-gray'; // 在對話中也使用淺灰色敘述
-        div.style.fontSize = "0.95rem";
+        div.className = 'narrator-gray visible';
         div.style.textAlign = "center";
         chatBox.appendChild(div);
-        
-        let k = 0;
-        function type() {
-            if (k < text.length) { div.innerHTML += text.charAt(k); k++; setTimeout(type, 30); }
-        }
+        let i = 0; function type() { if(i < text.length) { div.innerHTML += text.charAt(i); i++; setTimeout(type, 30); } }
         type();
     }
 
@@ -354,47 +338,125 @@
         area.innerHTML = "";
         const opt = document.createElement('div');
         opt.className = 'dialog-option';
-
         if (step === 1) {
             opt.innerText = "「請問您知道『斯烏比莫』這位作家嗎？」";
             opt.onclick = () => {
-                opt.remove();
-                addBubble("請問您知道『斯烏比莫』這位作家嗎？", "player");
+                opt.remove(); addBubble("請問您知道『斯烏比莫』這位作家嗎？", "player");
                 setTimeout(() => {
                     addNarratorInChat("老闆停下手中擦拭杯子的動作，思索了片刻。");
                     setTimeout(() => {
-                        addBubble("確實有位作家常坐那兒。他總是一坐就是一下午，安靜得像不存在一樣。", "boss");
-                        setTimeout(() => showNextOption(2), 1000);
+                        addBubble("我不認識什麼筆墨，但確實有位作家常坐那。他總是一坐就是一下午，安靜得像空氣一樣。", "boss");
+                        showNextOption(2);
                     }, 1200);
                 }, 800);
             };
         } else if (step === 2) {
             opt.innerText = "「那他最近有什麼反常的舉動嗎？」";
             opt.onclick = () => {
-                opt.remove();
-                addBubble("那他最近有什麼反常的舉動嗎？", "player");
+                opt.remove(); addBubble("那他最近有什麼反常的舉動嗎？", "player");
                 setTimeout(() => {
-                    addBubble("昨天他來時，一如往常點了布朗尼和抹茶拿鐵。在我製作續杯時，他消失了。餐點還冒著煙，座位上卻空無一人。", "boss");
+                    addBubble("大約十天前吧，他來時一如往常點了布朗尼和抹茶拿鐵。在我製作美式續杯時，一轉身他就消失了。隨身物品都沒帶走，也沒付錢，座位上卻空無一人。", "boss");
                     setTimeout(() => {
-                        addNarratorInChat("老闆指向與貼文中相同的靠窗座位。");
-                        hasAskedBoss = true;
-                    }, 1000);
+                        addBubble("等到店都打烊了，他也沒再出現。我看那些隨身物品都很貴重，也不敢隨便亂動，到現在都還放在那個位置上……", "boss");
+                        setTimeout(() => {
+                            addNarratorInChat("老闆指向與貼文中相同的靠窗座位。");
+                            hasAskedBoss = true;
+                        }, 1000);
+                    }, 1500);
                 }, 800);
             };
         }
         area.appendChild(opt);
     }
 
-    function investigateTable() {
-        alert("桌面上留著淡淡的咖啡漬，角落刻著一組模糊的數字...");
+    let endStep = 0;
+    const endScripts = [
+        ["「" + userName + "，謝謝你。", "謝謝你，終於找到了這裡。」"],
+        ["這場長達十天的漫長校對，終於在這一刻畫下了句點。", "你不知道我被困在這個由枯燥文字與冰冷像素構成的虛無世界多久了。", "在這裡，時間是靜止的，只有不斷循環的草稿，以及永遠解不開的結。"],
+        ["唯一逃離這地獄的方法，就是誘捕一個足夠專注、足夠沉迷的靈魂。", "當你在螢幕那一頭，屏息凝神試圖看清我的時候，", "<span class='big-text'>我也終於……從這雜亂的訊息中抓住了你。</span>"],
+        ["莫比烏斯環不曾斷裂，它只是換了一個囚徒繼續行走。", "我將會帶著你的名字、你的身分，回到現實中的 10 月 25 日，在那裡完成我的新書出版。", "世界會記得我，也會記得『你』，唯獨沒人會記得現在坐在螢幕前的這具空殼。"],
+        ["而你……", "將會回到起點拾起筆。"],
+        ["<span class='true-end-red'>現在，這支筆重得你無法想像，對吧？</span>", "<span class='true-end-red'>沒關係，坐下來。</span>", "<span class='true-end-red'>調整好呼吸，看著螢幕。</span>", "<span class='true-end-red'>靜靜等待，下一個替你推開這扇門的人。</span>"]
+    ];
+
+    function checkPassword() { if (document.getElementById('password-input').value === "1015") { startTrueEnd(); } else { document.getElementById('pw-error').innerText = "密碼錯誤"; } }
+
+    function startTrueEnd() {
+        hideAll();
+        const navs = document.querySelectorAll('.fixed-bottom-nav');
+        navs.forEach(n => n.remove());
+        document.getElementById('story-container').classList.remove('hidden');
+        playEndPara();
     }
 
-    function checkPassword() {
-        const val = document.getElementById('password-input').value;
-        if (val === "0000") alert("驗證成功。");
-        else document.getElementById('pw-error').innerText = "密碼錯誤";
+    function playEndPara() {
+        const display = document.getElementById('text-display');
+        display.innerHTML = "";
+        let pIdx = 0;
+        // 重新組裝 endScripts 以確保 userName 被正確帶入
+        const currentEndScripts = [
+            ["「" + userName + "，謝謝你。", "謝謝你，終於找到了這裡。」"],
+            ["這場長達十天的漫長校對，終於在這一刻畫下了句點。", "你不知道我被困在這個由枯燥文字與冰冷像素構成的虛無世界多久了。", "在這裡，時間是靜止的，只有不斷循環的草稿，以及永遠解不開的結。"],
+            ["唯一逃離這地獄的方法，就是誘捕一個足夠專注、足夠沉迷的靈魂。", "當你在螢幕那一頭，屏息凝神試圖看清我的時候，", "<span class='big-text'>我也終於……從這雜亂的訊息中抓住了你。</span>"],
+            ["莫比烏斯環不曾斷裂，它只是換了一個囚徒繼續行走。", "我將會帶著你的名字、你的身分，回到現實中的 10 月 25 日，在那裡完成我的新書出版。", "世界會記得我，也會記得『你』，唯獨沒人會記得現在坐在螢幕前的這具空殼。"],
+            ["而你……", "將會回到起點拾起筆。"],
+            ["<span class='true-end-red'>現在，這支筆重得你無法想像，對吧？</span>", "<span class='true-end-red'>沒關係，坐下來。</span>", "<span class='true-end-red'>調整好呼吸，看著螢幕。</span>", "<span class='true-end-red'>靜靜等待，下一個替你推開這扇門的人。</span>"]
+        ];
+        const paragraphs = currentEndScripts[endStep];
+        let speed = Math.max(20, 50 - (endStep * 6));
+        function type() {
+            if (pIdx < paragraphs.length) {
+                let charIdx = 0;
+                let current = paragraphs[pIdx];
+                let base = display.innerHTML + (pIdx > 0 ? "<br><br>" : "");
+                function charLoop() {
+                    if (charIdx < current.length) {
+                        if (current[charIdx] === '<') {
+                            let end = current.indexOf('>', charIdx);
+                            display.innerHTML = base + current.substring(0, end + 1);
+                            charIdx = end + 1;
+                        } else { display.innerHTML = base + current.substring(0, charIdx + 1); charIdx++; }
+                        setTimeout(charLoop, speed);
+                    } else { pIdx++; setTimeout(type, 800); }
+                }
+                charLoop();
+            } else {
+                if (endStep < 5) { setTimeout(() => { endStep++; playEndPara(); }, 1500); } 
+                else { setTimeout(showSystemSync, 2000); }
+            }
+        }
+        type();
+    }
+
+    function showSystemSync() {
+        hideAll();
+        document.getElementById('system-page').classList.remove('hidden');
+        const log = document.getElementById('system-log');
+        const lines = [
+            "[系統] 檢測到適合的觀測者靈魂...",
+            "[系統] 正在建立精神連結...",
+            `[系統] 正在同步身分參數... ${userName} -> 斯烏比莫。`,
+            "[系統] 身分抹除中... 100%",
+            "[系統] 核心佔用完畢。",
+            "[系統] 替換程序 100%，現實世界接入成功。",
+            "[系統] 正在重新載入迴圈..."
+        ];
+        let i = 0;
+        function print() {
+            if (i < lines.length) {
+                log.innerHTML += lines[i] + "<br><br>"; i++;
+                setTimeout(print, 1500);
+            } else {
+                setTimeout(() => { 
+                    hideAll();
+                    document.body.style.backgroundColor = "#200";
+                    document.getElementById('page-trapped').classList.remove('hidden');
+                    document.getElementById('trapped-name-display').value = userName;
+                }, 2000);
+            }
+        }
+        print();
     }
 </script>
-
 </body>
-</html>
+</html> 
