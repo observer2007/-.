@@ -5,14 +5,14 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>迴圈 - 互動敘事</title>
     <style>
-        /* 修復手機遮擋：改為 flex-start 並增加 padding */
+        /* 針對手機版進行大幅度優化，確保頂部不被遮擋 */
         body { 
             background-color: #000; 
             color: #fff; 
             font-family: 'Courier New', Courier, 'Microsoft JhengHei', monospace; 
             display: flex; 
             justify-content: center; 
-            align-items: flex-start; 
+            align-items: flex-start; /* 從頂部開始排版 */
             min-height: 100vh; 
             margin: 0; 
             overflow-y: auto; 
@@ -25,13 +25,12 @@
             width: 90%; 
             max-width: 700px; 
             text-align: center; 
-            margin-top: 50px; /* 這裡預留了頂部距離，避開手機瀏海 */
+            margin-top: 80px; /* 大量留白，避開手機狀態列與瀏海 */
         }
 
         .hidden { display: none !important; }
         h1.main-title { font-size: 5rem; letter-spacing: 20px; margin-bottom: 20px; font-weight: bold; }
         
-        /* 手機版標題縮小 */
         @media (max-width: 600px) {
             h1.main-title { font-size: 3rem; letter-spacing: 10px; }
         }
@@ -46,7 +45,7 @@
             text-align: left; 
             min-height: 200px; 
             white-space: pre-wrap; 
-            word-wrap: break-word; /* 確保長文字自動斷行 */
+            word-wrap: break-word;
         }
 
         .narrator-gray { color: #a0a0a0; font-style: italic; font-size: 1.1rem; margin-bottom: 20px; text-align: left; }
@@ -319,7 +318,8 @@
             hideAll();
             document.getElementById('display-page').classList.remove('hidden');
             document.getElementById('display-title').innerText = "📄 檔案名稱：Observer.txt";
-            document.getElementById('display-content').innerHTML = "狀態： 已從加密磁區解鎖：<br><br>「親愛的觀測者，當你讀到這段文字時，說明你已經解開重重謎團。你的專注與執著遠超我的預期，這也意欲著，你正一步步踏入這個無法回頭的圓圈。<br><br>我一直在關注你。我看見你點開這個網頁、看見你輸入名字、看見你試圖在雜亂的草稿中尋找我的蹤跡。<br><br>關於最終的加密檔案，那是送給你的禮物，也是通往真相的唯一鑰匙。如果你在尋找那四位數的組合，請記住這段話：<br><br>『起點為我離開之日，終點是解開謎團的那天。<br>兩者相連，即是迴圈。』<br><br>不要停下你的觀測。<br>因為只有當你徹底看見我時，我才能……在另一面看見你。<br><br>—— 斯烏比莫」";
+            // 此處特別加入 <br> 增加空白行
+            document.getElementById('display-content').innerHTML = "<br>狀態： 已從加密磁區解鎖：<br><br>「親愛的觀測者，當你讀到這段文字時，說明你已經解開重重謎團。你的專注與執著遠超我的預期，這也意欲著，你正一步步踏入這個無法回頭的圓圈。<br><br>我一直在關注你。我看見你點開這個網頁、看見你輸入名字、看見你試圖在雜亂的草稿中尋找我的蹤跡。<br><br>關於最終的加密檔案，那是送給你的禮物，也是通往真相的唯一鑰匙。如果你在尋找那四位數的組合，請記住這段話：<br><br>『起點為我離開之日，終點是解開謎團的那天。<br>兩者相連，即是迴圈。』<br><br>不要停下你的觀測。<br>因為只有當你徹底看見我時，我才能……在另一面看見你。<br><br>—— 斯烏比莫」";
         } else { document.getElementById('laptop-error-2').innerText="驗證失敗"; }
     }
 
@@ -391,7 +391,7 @@
             opt.onclick = () => {
                 opt.remove(); addBubble("那他最近有什麼反常的舉動嗎？", "player");
                 setTimeout(() => {
-                    addBubble("大約十天前吧，他來時一如往常點了布朗尼 and 抹茶拿鐵。在我製作美式續杯時，一轉身他就消失了。隨身物品都沒帶走，也沒付錢，座位上卻空無一人。", "boss");
+                    addBubble("大約十天前吧，他來時一如往常點了布朗尼 and 抹茶拿鐵。在我製作美式續杯時，一轉身他就不見了。隨身物品都沒帶走，也沒付錢，座位上卻空無一人。", "boss");
                     setTimeout(() => {
                         addBubble("等到店都打烊了，他也沒再出現。我看那些隨身物品都很貴重，也不敢隨便亂動，到現在都還放在那個位置上……", "boss");
                         setTimeout(() => {
@@ -405,7 +405,6 @@
         area.appendChild(opt);
     }
 
-    let endStep = 0;
     function checkPassword() { if (document.getElementById('password-input').value === "1015") { startTrueEnd(); } else { document.getElementById('pw-error').innerText = "密碼錯誤"; } }
 
     function startTrueEnd() {
