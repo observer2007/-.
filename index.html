@@ -243,7 +243,7 @@
     function showNextOption(step) {
         const area = document.getElementById('dialog-options-area'); area.innerHTML = ""; const opt = document.createElement('div'); opt.className = 'dialog-option';
         if (step === 1) { opt.innerText = "「請問您知道『斯烏比莫』這位作家嗎？」"; opt.onclick = () => { opt.remove(); addBubble("請問您知道『斯烏比莫』這位作家嗎？", "player"); setTimeout(() => { addNarratorInChat("老闆停下手中擦拭杯子的動作，思索了片刻。"); setTimeout(() => { addBubble("我不認識什麼筆墨，但確實有位作家常坐那。他總是一坐就是一下午，安靜得像空氣一樣。", "boss"); showNextOption(2); }, 1200); }, 800); }; } 
-        else if (step === 2) { opt.innerText = "「那他最近有什麼反常的舉動嗎？」"; opt.onclick = () => { opt.remove(); addBubble("那他最近有什麼反常的舉動嗎？", "player"); setTimeout(() => { addBubble("大約十天前吧，他來時一如往常點了布朗尼跟美式咖啡，隨後又續了一杯抹茶。在我製作續杯時，一轉眼他就消失了。隨身物品都沒帶走，也沒付錢，座位上卻空無一人。", "boss"); setTimeout(() => { addBubble("等到店都打烊了，他也沒再出現。我看那些隨身物品都很貴重，也不敢隨便亂動，到現在都還放在那個位置上……", "boss"); setTimeout(() => { addNarratorInChat("老闆指向與貼文中相同的靠窗座位。"); hasAskedBoss = true; }, 1000); }, 1500); }, 800); }; }
+        else if (step === 2) { opt.innerText = "「那他最近有什麼反常的舉動嗎？」"; opt.onclick = () => { opt.remove(); addBubble("那他最近有什麼反常的舉動嗎？", "player"); setTimeout(() => { addBubble("大約十天前吧，他來時一如往常點了布朗尼跟抹茶拿鐵，隨後又續了一杯美式咖啡。在我製作續杯時，一轉眼他就消失了。隨身物品都沒帶走，也沒付錢，座位上卻空無一人。", "boss"); setTimeout(() => { addBubble("等到店都打烊了，他也沒再出現。我看那些隨身物品都很貴重，也不敢隨便亂動，到現在都還放在那個位置上……", "boss"); setTimeout(() => { addNarratorInChat("老闆指向與貼文中相同的靠窗座位。"); hasAskedBoss = true; }, 1000); }, 1500); }, 800); }; }
         area.appendChild(opt);
     }
 
