@@ -5,14 +5,14 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>迴圈 - 互動敘事</title>
     <style>
-        /* 針對手機版進行大幅度優化，確保頂部不被遮擋 */
+        /* 針對手機版優化 */
         body { 
             background-color: #000; 
             color: #fff; 
             font-family: 'Courier New', Courier, 'Microsoft JhengHei', monospace; 
             display: flex; 
             justify-content: center; 
-            align-items: flex-start; /* 從頂部開始排版 */
+            align-items: flex-start; 
             min-height: 100vh; 
             margin: 0; 
             overflow-y: auto; 
@@ -20,58 +20,31 @@
             transition: background-color 3s; 
             padding: 20px 0;
         }
-
-        #game-container { 
-            width: 92%; 
-            max-width: 700px; 
-            text-align: center; 
-            margin-top: 60px; /* 適度留白 */
-        }
-
+        #game-container { width: 92%; max-width: 700px; text-align: center; margin-top: 60px; }
         .hidden { display: none !important; }
-        
-        /* 文字調小優化 */
         h1.main-title { font-size: 3.5rem; letter-spacing: 15px; margin-bottom: 20px; font-weight: bold; }
-        
-        @media (max-width: 600px) {
-            h1.main-title { font-size: 2.5rem; letter-spacing: 8px; }
-        }
-
+        @media (max-width: 600px) { h1.main-title { font-size: 2.5rem; letter-spacing: 8px; } }
         input[type="text"] { background: transparent; border: none; border-bottom: 2px solid #fff; color: #fff; font-size: 1.2rem; padding: 10px; width: 80%; max-width: 280px; text-align: center; outline: none; }
         input:disabled { color: #888; border-bottom: 2px solid #444; }
         .blue-btn { color: #3498db; background: none; border: none; font-size: 1.2rem; cursor: pointer; text-decoration: underline; padding: 10px 20px; margin-top: 20px; }
         .error-msg { color: #ff4d4d; height: 30px; margin-top: 10px; font-size: 0.9rem; }
-        
-        /* 內容字體調小 */
-        .content-box { 
-            font-size: 1.0rem; 
-            text-align: left; 
-            min-height: 200px; 
-            white-space: pre-wrap; 
-            word-wrap: break-word;
-        }
-
+        .content-box { font-size: 1.0rem; text-align: left; min-height: 200px; white-space: pre-wrap; word-wrap: break-word; }
         .narrator-gray { color: #a0a0a0; font-style: italic; font-size: 0.9rem; margin-bottom: 20px; text-align: left; }
         .blue-link { color: #3498db; text-decoration: underline; cursor: pointer; font-weight: bold; }
-        
-        /* 選項樣式 */
         .vertical-list { list-style: none; padding: 0; text-align: left; font-size: 1.2rem; }
         .vertical-list li { margin: 20px 0; cursor: pointer; }
         .vertical-list li:hover { color: #3498db; }
         
-        /* 修正老闆對話按鈕為藍字底線 */
+        /* 選項藍字底線 */
         .boss-ask-btn { color: #3498db !important; text-decoration: underline !important; font-weight: bold; }
-
-        .fixed-bottom-nav { margin-top: 40px; border-top: 1px dashed #333; padding-top: 10px; }
         
-        /* 對話框調整 */
+        .fixed-bottom-nav { margin-top: 40px; border-top: 1px dashed #333; padding-top: 10px; }
         .chat-container { display: flex; flex-direction: column; gap: 12px; padding: 10px; max-height: 350px; overflow-y: auto; margin-bottom: 20px; }
         .bubble { max-width: 85%; padding: 10px 15px; border-radius: 15px; font-size: 0.95rem; opacity: 0; transform: translateY(10px); animation: bubbleAppear 0.4s forwards; }
         @keyframes bubbleAppear { to { opacity: 1; transform: translateY(0); } }
         .player-bubble { align-self: flex-end; background-color: #3498db; color: white; border-bottom-right-radius: 2px; }
         .boss-bubble { align-self: flex-start; background-color: #333; color: #fff; border-bottom-left-radius: 2px; }
         .dialog-option { display: block; width: 100%; text-align: right; color: #3498db; cursor: pointer; margin: 10px 0; text-decoration: underline; }
-        
         .big-text { font-size: 1.8rem; font-weight: bold; color: #fff; line-height: 1.4; display: block; margin-top: 10px; }
         .true-end-red { color: #ff3333; text-shadow: 0 0 10px #ff0000; }
         #system-log { font-family: monospace; color: #00ff00; text-align: left; font-size: 0.9rem; line-height: 1.8; padding: 20px; border: 1px solid #00ff00; background: #050505; }
@@ -212,37 +185,16 @@
     let hasReadDraft = false;
 
     const scripts = {
-        "prologue": [
-            "斯烏比莫，知名懸疑作家，原定於 10 月 25 日出版新書《迴圈》。",
-            "身為頭號粉絲，你從消息公布時就開始期待。",
-            "但從十天前起，他的社群帳號停止更新，到了預定出版的日期依舊如此......",
-            "你焦慮地不斷重新整理頁面。突然間，斯烏比莫的社群帳號裡，所有公開貼文被清空，只留下一張在咖啡廳的照片貼文，以及一個加密檔案。"
-        ],
+        "prologue": ["斯烏比莫，知名懸疑作家，原定於 10 月 25 日出版新書《迴圈》。", "身為頭號粉絲，你從消息公布時就開始期待。", "但從十天前起，他的社群帳號停止更新，到了預定出版的日期依舊如此......", "你焦慮地不斷重新整理頁面。突然間，斯烏比莫的社群帳號裡，所有公開貼文被清空，只留下一張在咖啡廳的照片貼文，以及一個加密檔案。"],
         2: ["斯烏比莫，知名懸疑作家，原定於 10 月 25 日出版新書《迴圈》。", "身為頭號粉絲，你從消息公布時就開始期待。", "但從十天前起，他的社群帳號停止更新，到了預定出版的日期依舊如此......"],
         3: ["你焦慮地不斷重新整理頁面。", "突然間，斯烏比莫的社群帳號裡，所有公開貼文被清空......", "只留下一張在咖啡廳的照片貼文，以及一個名為 <span class='blue-link' onclick='goToEncryptedFile()'>『給讀者』</span> 的加密檔案。"],
         "photo": ["這是一張斯烏比莫在咖啡廳的照片。", "照片中，窗邊位置的桌上放著一張泛黃的草稿紙與一台筆記型電腦。", "照片下方標記著一個地點：單結咖啡廳。"],
         "giveup": ["你最終還是放下了那份好奇。", "隨著瀏覽器分頁的關閉，那些神祕的訊息都成了視窗外逐漸模糊的殘影。", "斯烏比莫這個名字不再出現在你的關注清單，就像那場從未發生的出版計畫，消失在平凡的生活裡……"]
     };
 
-    function goToForm() {
-        window.location.href = "https://docs.google.com/forms/d/e/1FAIpQLScRON6Pka3pHX-zEz94MeTwVaT3GYWlMJHK5ouOSmagROqm7w/viewform?usp=dialog";
-    }
-
-    function startGame() {
-        userName = document.getElementById('user-name').value.trim();
-        if (userName === "") { document.getElementById('name-error').innerText = "請輸入名字"; return; }
-        document.getElementById('page-1').classList.add('hidden');
-        loadPage(2);
-    }
-
-    function showPrologue() {
-        hideAll();
-        document.getElementById('story-container').classList.remove('hidden');
-        const target = document.getElementById('text-display');
-        target.innerHTML = scripts["prologue"].join("<br><br>");
-        document.getElementById('story-nav').classList.remove('hidden');
-        document.getElementById('hint-area').classList.add('hidden');
-    }
+    function goToForm() { window.location.href = "https://docs.google.com/forms/d/e/1FAIpQLScRON6Pka3pHX-zEz94MeTwVaT3GYWlMJHK5ouOSmagROqm7w/viewform?usp=dialog"; }
+    function startGame() { userName = document.getElementById('user-name').value.trim(); if (userName === "") { document.getElementById('name-error').innerText = "請輸入名字"; return; } document.getElementById('page-1').classList.add('hidden'); loadPage(2); }
+    function showPrologue() { hideAll(); document.getElementById('story-container').classList.remove('hidden'); document.getElementById('text-display').innerHTML = scripts["prologue"].join("<br><br>"); document.getElementById('story-nav').classList.remove('hidden'); }
 
     function loadPage(pageNumber) {
         hideAll();
@@ -252,26 +204,15 @@
         document.getElementById('hint-area').classList.add('hidden');
         document.getElementById('story-nav').classList.add('hidden');
         const paragraphs = scripts[pageNumber];
-        
-        if (pageNumber === "photo" && photoViewedOnce) {
-            target.innerHTML = paragraphs.join("<br><br>");
-            document.getElementById('story-nav').classList.remove('hidden');
-            return;
-        }
-
+        if (pageNumber === "photo" && photoViewedOnce) { target.innerHTML = paragraphs.join("<br><br>"); document.getElementById('story-nav').classList.remove('hidden'); return; }
         let pIndex = 0;
         function type() {
             if (pIndex < paragraphs.length) {
-                let charIdx = 0;
-                let currentPara = paragraphs[pIndex];
-                let baseHTML = target.innerHTML + (pIndex > 0 ? "<br><br>" : "");
+                let charIdx = 0; let currentPara = paragraphs[pIndex]; let baseHTML = target.innerHTML + (pIndex > 0 ? "<br><br>" : "");
                 function charLoop() {
                     if (charIdx < currentPara.length) {
-                        if (currentPara[charIdx] === '<') {
-                            let end = currentPara.indexOf('>', charIdx);
-                            target.innerHTML = baseHTML + currentPara.substring(0, end + 1);
-                            charIdx = end + 1;
-                        } else { target.innerHTML = baseHTML + currentPara.substring(0, charIdx + 1); charIdx++; }
+                        if (currentPara[charIdx] === '<') { let end = currentPara.indexOf('>', charIdx); target.innerHTML = baseHTML + currentPara.substring(0, end + 1); charIdx = end + 1; } 
+                        else { target.innerHTML = baseHTML + currentPara.substring(0, charIdx + 1); charIdx++; }
                         setTimeout(charLoop, 40);
                     } else { pIndex++; setTimeout(type, 1000); }
                 }
@@ -279,35 +220,15 @@
             } else {
                 if (pageNumber === 2) setTimeout(() => loadPage(3), 1500);
                 else if (pageNumber === 3) document.getElementById('hint-area').classList.remove('hidden');
-                else if (pageNumber === "photo") { 
-                    photoViewedOnce = true; 
-                    setTimeout(() => document.getElementById('story-nav').classList.remove('hidden'), 1000); 
-                } else if (pageNumber === "giveup") {
-                    setTimeout(() => {
-                        document.getElementById('story-nav').classList.remove('hidden');
-                        document.getElementById('story-nav').innerHTML = `<button class="blue-btn" onclick="goToForm()">[ 結束遊戲 ]</button><button class="blue-btn" onclick="loadPageA()">[ 返回主頁 ]</button>`;
-                    }, 1000);
-                }
+                else if (pageNumber === "photo") { photoViewedOnce = true; setTimeout(() => document.getElementById('story-nav').classList.remove('hidden'), 1000); }
+                else if (pageNumber === "giveup") { setTimeout(() => { document.getElementById('story-nav').classList.remove('hidden'); document.getElementById('story-nav').innerHTML = `<button class="blue-btn" onclick="goToForm()">[ 結束遊戲 ]</button><button class="blue-btn" onclick="loadPageA()">[ 返回主頁 ]</button>`; }, 1000); }
             }
         }
         type();
     }
 
-    function hideAll() {
-        const ids = ['page-trapped', 'page-1', 'story-container', 'file-page', 'page-a', 'confirm-giveup-page', 'cafe-main', 'cafe-chat-page', 'cafe-menu-page', 'table-investigate-page', 'laptop-page-1', 'laptop-page-2', 'display-page', 'system-page'];
-        ids.forEach(id => document.getElementById(id).classList.add('hidden'));
-    }
-
-    function loadPageA() { 
-        hideAll(); 
-        document.getElementById('page-a').classList.remove('hidden'); 
-        if (photoViewedOnce) { 
-            document.getElementById('cafe-link').classList.remove('hidden'); 
-            document.getElementById('giveup-link').classList.remove('hidden'); 
-        } 
-        document.getElementById('story-nav').innerHTML = `<button class="blue-btn" onclick="loadPageA()">[ 返回主頁 ]</button>`;
-    }
-
+    function hideAll() { const ids = ['page-trapped', 'page-1', 'story-container', 'file-page', 'page-a', 'confirm-giveup-page', 'cafe-main', 'cafe-chat-page', 'cafe-menu-page', 'table-investigate-page', 'laptop-page-1', 'laptop-page-2', 'display-page', 'system-page']; ids.forEach(id => document.getElementById(id).classList.add('hidden')); }
+    function loadPageA() { hideAll(); document.getElementById('page-a').classList.remove('hidden'); if (photoViewedOnce) { document.getElementById('cafe-link').classList.remove('hidden'); document.getElementById('giveup-link').classList.remove('hidden'); } document.getElementById('story-nav').innerHTML = `<button class="blue-btn" onclick="loadPageA()">[ 返回主頁 ]</button>`; }
     function confirmGiveUp() { hideAll(); document.getElementById('confirm-giveup-page').classList.remove('hidden'); }
     function startGiveUpEnd() { loadPage("giveup"); }
     function goToEncryptedFile() { hideAll(); document.getElementById('file-page').classList.remove('hidden'); }
@@ -315,123 +236,68 @@
     function enterCafeMain() { hideAll(); document.getElementById('cafe-main').classList.remove('hidden'); if(hasAskedBoss) document.getElementById('table-opt').classList.remove('hidden'); }
     function goToInvestigateTable() { hideAll(); document.getElementById('table-investigate-page').classList.remove('hidden'); }
     function openLaptopStep1() { hideAll(); document.getElementById('laptop-page-1').classList.remove('hidden'); }
-    
-    function checkLaptopPw1() { 
-        if (document.getElementById('laptop-pw-1').value === "200") { 
-            hideAll(); 
-            document.getElementById('laptop-page-2').classList.remove('hidden'); 
-        } else { 
-            document.getElementById('laptop-error-1').innerText="密碼錯誤"; 
-        } 
-    }
-    
-    function checkLaptopPw2() {
-        if (document.getElementById('laptop-pw-2').value === "環") {
-            hideAll();
-            document.getElementById('display-page').classList.remove('hidden');
-            document.getElementById('display-title').innerText = "📄 檔案名稱：Observer.txt";
-            document.getElementById('display-content').innerHTML = "<br>狀態： 已從加密磁區解鎖：<br><br>親愛的觀測者，當你讀到這段文字時，說明你已經解開重重謎團。你的專注與執著遠超我的預期，這也意欲著，你正一步步踏入這個無法回頭的迴圈。<br><br>我一直在關注你。我看見你點開這個網頁、看見你輸入名字、看見你試圖在雜亂的草稿中尋找我的蹤跡。<br><br>關於最終的加密檔案，那是送給你的禮物，也是通往真相的唯一鑰匙。如果你在尋找那四位數的組合，請記住這段話：<br><br>『起點為我離開之日，終點是解開謎團的那天。<br>兩者相連，即是迴圈。』<br><br>不要停下你的觀測。<br>因為只有當你徹底看見我時，我才能……在另一面看見你。<br><br>—— 斯烏比莫";
-        } else { document.getElementById('laptop-error-2').innerText="驗證失敗"; }
-    }
-
-    function readDraft() {
-        hideAll();
-        document.getElementById('display-page').classList.remove('hidden');
-        document.getElementById('display-title').innerText = "📖 翻閱草稿紙";
-        const display = document.getElementById('display-content');
-        const content = "我在囯中 看見了被禁錮的無力，\n我在圜中 徒勞地繞著小徑周而復始。\n\n若要解脫，請直視那些被囚禁在核心的真相，\n當碎裂的靈魂重逢之時，那便是你應許的答案。";
-        if (hasReadDraft) { display.innerText = content; }
-        else {
-            display.innerText = ""; let i = 0;
-            function type() { if (i < content.length) { display.innerText += content.charAt(i); i++; setTimeout(type, 50); } else { hasReadDraft = true; } }
-            type();
-        }
-    }
-    
+    function checkLaptopPw1() { if (document.getElementById('laptop-pw-1').value === "200") { hideAll(); document.getElementById('laptop-page-2').classList.remove('hidden'); } else { document.getElementById('laptop-error-1').innerText="密碼錯誤"; } }
+    function checkLaptopPw2() { if (document.getElementById('laptop-pw-2').value === "環") { hideAll(); document.getElementById('display-page').classList.remove('hidden'); document.getElementById('display-title').innerText = "📄 檔案名稱：Observer.txt"; document.getElementById('display-content').innerHTML = "<br>狀態： 已從加密磁區解鎖：<br><br>親愛的觀測者，當你讀到這段文字時，說明你已經解開重重謎團。你的專注與執著遠超我的預期，這也意欲著，你正一步步踏入這個無法回頭的迴圈。<br><br>我一直在關注你。我看見你點開這個網頁、看見你輸入名字、看見你試圖在雜亂的草稿中尋找我的蹤跡。<br><br>關於最終的加密檔案，那是送給你的禮物，也是通往真相的唯一鑰匙。如果你在尋找那四位數的組合，請記住這段話：<br><br>『起點為我離開之日，終點是解開謎團的那天。<br>兩者相連，即是迴圈。』<br><br>不要停下你的觀測。<br>因為只有當你徹底看見我時，我才能……在另一面看見你。<br><br>—— 斯烏比莫"; } else { document.getElementById('laptop-error-2').innerText="驗證失敗"; } }
+    function readDraft() { hideAll(); document.getElementById('display-page').classList.remove('hidden'); document.getElementById('display-title').innerText = "📖 翻閱草稿紙"; const display = document.getElementById('display-content'); const content = "我在囯中 看見了被禁錮的無力，\n我在圜中 徒勞地繞著小徑周而復始。\n\n若要解脫，請直視那些被囚禁在核心的真相，\n當碎裂的靈魂重逢之時，那便是你應許的答案。"; if (hasReadDraft) { display.innerText = content; } else { display.innerText = ""; let i = 0; function type() { if (i < content.length) { display.innerText += content.charAt(i); i++; setTimeout(type, 50); } else { hasReadDraft = true; } } type(); } }
     function goToCafeMenu() { hideAll(); document.getElementById('cafe-menu-page').classList.remove('hidden'); }
-    function goToCafeChat() {
-        hideAll();
-        document.getElementById('cafe-chat-page').classList.remove('hidden');
-        const desc = document.getElementById('boss-desc');
-        if(desc.innerHTML === "") {
-            let text = "老闆繫著深褐色的圍裙，正專注地擦拭一只晶瑩的高腳杯，神情溫和卻帶著一絲憂慮。";
-            let i = 0; function type() { if(i < text.length) { desc.innerHTML += text.charAt(i); i++; setTimeout(type, 30); } }
-            type();
-        }
-        if(document.getElementById('chat-box').innerHTML === "") showNextOption(1);
-    }
+    function goToCafeChat() { hideAll(); document.getElementById('cafe-chat-page').classList.remove('hidden'); const desc = document.getElementById('boss-desc'); if(desc.innerHTML === "") { let text = "老闆繫著深褐色的圍裙，正專注地擦拭一只晶瑩的高腳杯，神情溫和卻帶著一絲憂慮。"; let i = 0; function type() { if(i < text.length) { desc.innerHTML += text.charAt(i); i++; setTimeout(type, 30); } } type(); } if(document.getElementById('chat-box').innerHTML === "") showNextOption(1); }
+    function addBubble(text, type) { const chatBox = document.getElementById('chat-box'); const div = document.createElement('div'); div.className = `bubble ${type}-bubble`; div.innerHTML = (type === 'boss' ? '👨‍🍳 : ' : '') + text; chatBox.appendChild(div); chatBox.scrollTop = chatBox.scrollHeight; }
+    function addNarratorInChat(text) { const chatBox = document.getElementById('chat-box'); const div = document.createElement('div'); div.className = 'narrator-gray visible'; div.style.textAlign = "center"; chatBox.appendChild(div); let i = 0; function type() { if(i < text.length) { div.innerHTML += text.charAt(i); i++; setTimeout(type, 30); } } type(); }
 
-    function addBubble(text, type) {
-        const chatBox = document.getElementById('chat-box');
-        const div = document.createElement('div');
-        div.className = `bubble ${type}-bubble`;
-        div.innerHTML = (type === 'boss' ? '👨‍🍳 : ' : '') + text;
-        chatBox.appendChild(div);
-        chatBox.scrollTop = chatBox.scrollHeight;
-    }
-
-    function addNarratorInChat(text) {
-        const chatBox = document.getElementById('chat-box');
-        const div = document.createElement('div');
-        div.className = 'narrator-gray visible';
-        div.style.textAlign = "center";
-        chatBox.appendChild(div);
-        let i = 0; function type() { if(i < text.length) { div.innerHTML += text.charAt(i); i++; setTimeout(type, 30); } }
-        type();
-    }
-
+    // 與老闆對話的完整內容
     function showNextOption(step) {
-        const area = document.getElementById('dialog-options-area');
-        area.innerHTML = "";
-        const opt = document.createElement('div');
+        const area = document.getElementById('dialog-options-area'); 
+        area.innerHTML = ""; 
+        const opt = document.createElement('div'); 
         opt.className = 'dialog-option';
-        if (step === 1) {
-            opt.innerText = "「請問您知道『斯烏比莫』這位作家嗎？」";
-            opt.onclick = () => {
-                opt.remove(); addBubble("請問您知道『斯烏比莫』這位作家嗎？", "player");
-                setTimeout(() => {
-                    addNarratorInChat("老闆停下手中擦拭杯子的動作，思索了片刻。");
-                    setTimeout(() => {
-                        addBubble("我不認識什麼筆墨，但確實有位作家常坐那。他總是一坐就是一下午，安靜得像空氣一樣。", "boss");
-                        showNextOption(2);
-                    }, 1200);
-                }, 800);
-            };
-        } else if (step === 2) {
-            opt.innerText = "「那他最近有什麼反常的舉動嗎？」";
-            opt.onclick = () => {
-                opt.remove(); addBubble("那他最近有什麼反常的舉動嗎？", "player");
-                setTimeout(() => {
-                    addBubble("大約十天前吧，他來時一如往常點了布朗尼跟抹茶拿鐵。在我製作美式續杯時，一轉身他就不見了。隨身物品都沒帶走，也沒付錢，座位上卻空無一人。", "boss");
-                    setTimeout(() => {
-                        addBubble("等到店都打烊了，他也沒再出現。我看那些隨身物品都很貴重，也不敢隨便亂動，到現在都還放在那個位置上……", "boss");
-                        setTimeout(() => {
-                            addNarratorInChat("老闆指向與貼文中相同的靠窗座位。");
-                            hasAskedBoss = true;
-                        }, 1000);
-                    }, 1500);
-                }, 800);
-            };
+        if (step === 1) { 
+            opt.innerText = "「請問您知道『斯烏比莫』這位作家嗎？」"; 
+            opt.onclick = () => { 
+                opt.remove(); addBubble("請問您知道『斯烏比莫』這位作家嗎？", "player"); 
+                setTimeout(() => { 
+                    addNarratorInChat("老闆停下手中擦拭杯子的動作，思索了片刻。"); 
+                    setTimeout(() => { 
+                        addBubble("我不認識什麼筆墨，但確實有位作家常坐那。他總是一坐就是一下午，安靜得像空氣一樣。", "boss"); 
+                        showNextOption(2); 
+                    }, 1200); 
+                }, 800); 
+            }; 
+        } 
+        else if (step === 2) { 
+            opt.innerText = "「那他最近有什麼反常的舉動嗎？」"; 
+            opt.onclick = () => { 
+                opt.remove(); addBubble("那他最近有什麼反常的舉動嗎？", "player"); 
+                setTimeout(() => { 
+                    addBubble("大約十天前吧，他來時一如往常點了布朗尼跟抹茶拿鐵。在我製作美式續杯時，一轉眼他就消失了。隨身物品都沒帶走，也沒付錢，座位上卻空無一人。", "boss"); 
+                    setTimeout(() => { 
+                        addBubble("本以為他是去廁所，但等到店都打烊了，他也沒再出現。我看那些隨身物品都很貴重，也不敢隨便亂動，到現在都還放在那個位置上……", "boss"); 
+                        setTimeout(() => { 
+                            addNarratorInChat("老闆指向與貼文中相同的靠窗座位。"); 
+                            hasAskedBoss = true; 
+                        }, 1000); 
+                    }, 1500); 
+                }, 800); 
+            }; 
         }
         area.appendChild(opt);
     }
 
+    // --- 真結局核心優化 ---
     let endStep = 0;
     function checkPassword() { if (document.getElementById('password-input').value === "1015") { startTrueEnd(); } else { document.getElementById('pw-error').innerText = "密碼錯誤"; } }
 
     function startTrueEnd() {
         hideAll();
+        if(document.getElementById('hint-area')) document.getElementById('hint-area').remove(); // 徹底移除提示
         const navs = document.querySelectorAll('.fixed-bottom-nav');
         navs.forEach(n => n.remove());
         document.getElementById('story-container').classList.remove('hidden');
         playEndPara();
     }
 
-    // 真結局優化：全清空模式，防止文字殘留在螢幕上
     function playEndPara() {
         const display = document.getElementById('text-display');
-        display.innerHTML = ""; // 1. 每次顯示新段落前，徹底清空畫面
-        
+        display.innerHTML = ""; // 每次清空整頁
         let pIdx = 0;
         const currentEndScripts = [
             [" " + userName + "，謝謝你。", "謝謝你，終於找到了這裡。"],
@@ -441,69 +307,31 @@
             ["而你……", "將會回到起點拾起筆。"],
             ["<span class='true-end-red'>現在，這支筆重得你無法想像，對吧？</span>", "<span class='true-end-red'>沒關係，坐下來。</span>", "<span class='true-end-red'>調整好呼吸，看著螢幕。</span>", "<span class='true-end-red'>靜靜等待，下一個替你推開這扇門的人。</span>"]
         ];
-
         const paragraphs = currentEndScripts[endStep];
         let speed = Math.max(20, 50 - (endStep * 6));
-
         function type() {
             if (pIdx < paragraphs.length) {
-                let charIdx = 0;
-                let current = paragraphs[pIdx];
-                let base = display.innerHTML + (pIdx > 0 ? "<br><br>" : "");
+                let charIdx = 0; let current = paragraphs[pIdx]; let base = display.innerHTML + (pIdx > 0 ? "<br><br>" : "");
                 function charLoop() {
                     if (charIdx < current.length) {
-                        if (current[charIdx] === '<') {
-                            let end = current.indexOf('>', charIdx);
-                            display.innerHTML = base + current.substring(0, end + 1);
-                            charIdx = end + 1;
-                        } else { display.innerHTML = base + current.substring(0, charIdx + 1); charIdx++; }
+                        if (current[charIdx] === '<') { let end = current.indexOf('>', charIdx); display.innerHTML = base + current.substring(0, end + 1); charIdx = end + 1; } 
+                        else { display.innerHTML = base + current.substring(0, charIdx + 1); charIdx++; }
                         setTimeout(charLoop, speed);
                     } else { pIdx++; setTimeout(type, 800); }
                 }
                 charLoop();
             } else {
-                // 2. 當整面文字顯示完畢後，清空再進入下一段 (與序章邏輯一致)
-                if (endStep < 5) { 
-                    setTimeout(() => { 
-                        endStep++; 
-                        playEndPara(); 
-                    }, 1200); 
-                } else { 
-                    setTimeout(showSystemSync, 1500); 
-                }
+                if (endStep < 5) { setTimeout(() => { endStep++; playEndPara(); }, 1200); } 
+                else { setTimeout(showSystemSync, 1500); }
             }
         }
         type();
     }
 
     function showSystemSync() {
-        hideAll();
-        document.getElementById('system-page').classList.remove('hidden');
-        const log = document.getElementById('system-log');
-        const lines = [
-            "[系統] 檢測到適合的觀測者靈魂...",
-            "[系統] 正在建立精神連結...",
-            `[系統] 正在同步身分參數... ${userName} -> 斯烏比莫。`,
-            "[系統] 身分抹除中... 100%",
-            "[系統] 核心佔用完畢。",
-            "[系統] 替換程序 100%，現實世界接入成功。",
-            "[系統] 正在重新載入迴圈..."
-        ];
-        let i = 0;
-        function print() {
-            if (i < lines.length) {
-                log.innerHTML += lines[i] + "<br><br>"; i++;
-                setTimeout(print, 1200);
-            } else {
-                setTimeout(() => { 
-                    hideAll();
-                    document.body.style.backgroundColor = "#200";
-                    document.getElementById('page-trapped').classList.remove('hidden');
-                    document.getElementById('trapped-name-display').value = userName;
-                }, 1500);
-            }
-        }
-        print();
+        hideAll(); document.getElementById('system-page').classList.remove('hidden'); const log = document.getElementById('system-log');
+        const lines = ["[系統] 檢測到適合的觀測者靈魂...", "[系統] 正在建立精神連結...", `[系統] 正在同步身分參數... ${userName} -> 斯烏比莫。`, "[系統] 身分抹除中... 100%", "[系統] 核心佔用完畢。", "[系統] 替換程序 100%，現實 world 接入成功。", "[系統] 正在重新載入迴圈..."];
+        let i = 0; function print() { if (i < lines.length) { log.innerHTML += lines[i] + "<br><br>"; i++; setTimeout(print, 1200); } else { setTimeout(() => { hideAll(); document.body.style.backgroundColor = "#200"; document.getElementById('page-trapped').classList.remove('hidden'); document.getElementById('trapped-name-display').value = userName; }, 1500); } } print();
     }
 </script>
 </body>
