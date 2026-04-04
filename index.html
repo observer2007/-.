@@ -5,29 +5,63 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>迴圈 - 互動敘事</title>
     <style>
-        body { background-color: #000; color: #fff; font-family: 'Courier New', Courier, 'Microsoft JhengHei', monospace; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; overflow: hidden; line-height: 1.8; transition: background-color 3s; }
-        #game-container { width: 85%; max-width: 700px; text-align: center; }
+        body { 
+            background-color: #000; 
+            color: #fff; 
+            font-family: 'Courier New', Courier, 'Microsoft JhengHei', monospace; 
+            display: flex; 
+            justify-content: center; 
+            align-items: flex-start; 
+            min-height: 100vh; 
+            margin: 0; 
+            overflow-y: auto; 
+            line-height: 1.8; 
+            transition: background-color 3s; 
+            padding: 20px 0;
+        }
+
+        #game-container { 
+            width: 90%; 
+            max-width: 700px; 
+            text-align: center; 
+            margin-top: 80px; 
+        }
+
         .hidden { display: none !important; }
-        h1.main-title { font-size: 5rem; letter-spacing: 20px; margin-bottom: 20px; font-weight: bold; }
-        input[type="text"] { background: transparent; border: none; border-bottom: 2px solid #fff; color: #fff; font-size: 1.5rem; padding: 10px; width: 300px; text-align: center; outline: none; }
-        .blue-btn { color: #3498db; background: none; border: none; font-size: 1.5rem; cursor: pointer; text-decoration: underline; padding: 10px 20px; margin-top: 20px; }
-        .error-msg { color: #ff4d4d; height: 30px; margin-top: 10px; font-size: 1.1rem; }
-        .content-box { font-size: 1.2rem; text-align: left; min-height: 200px; white-space: pre-wrap; }
-        .narrator-gray { color: #a0a0a0; font-style: italic; font-size: 1.1rem; margin-bottom: 20px; text-align: left; }
+        h1.main-title { font-size: 4rem; letter-spacing: 20px; margin-bottom: 20px; font-weight: bold; }
+        
+        @media (max-width: 600px) {
+            h1.main-title { font-size: 2.5rem; letter-spacing: 10px; }
+        }
+
+        input[type="text"] { background: transparent; border: none; border-bottom: 2px solid #fff; color: #fff; font-size: 1.3rem; padding: 10px; width: 80%; max-width: 300px; text-align: center; outline: none; }
+        input:disabled { color: #888; border-bottom: 2px solid #444; }
+        .blue-btn { color: #3498db; background: none; border: none; font-size: 1.3rem; cursor: pointer; text-decoration: underline; padding: 10px 20px; margin-top: 20px; }
+        .error-msg { color: #ff4d4d; height: 30px; margin-top: 10px; font-size: 1rem; }
+        
+        .content-box { 
+            font-size: 1rem; 
+            text-align: left; 
+            min-height: 200px; 
+            white-space: pre-wrap; 
+            word-wrap: break-word;
+        }
+
+        .narrator-gray { color: #a0a0a0; font-style: italic; font-size: 0.9rem; margin-bottom: 20px; text-align: left; }
         .blue-link { color: #3498db; text-decoration: underline; cursor: pointer; font-weight: bold; }
-        .vertical-list { list-style: none; padding: 0; text-align: left; font-size: 1.4rem; }
+        .vertical-list { list-style: none; padding: 0; text-align: left; font-size: 1.2rem; }
         .vertical-list li { margin: 25px 0; cursor: pointer; }
         .vertical-list li:hover { color: #3498db; }
         .fixed-bottom-nav { margin-top: 40px; border-top: 1px dashed #333; padding-top: 10px; }
-        .chat-container { display: flex; flex-direction: column; gap: 15px; padding: 10px; max-height: 350px; overflow-y: auto; margin-bottom: 20px; }
-        .bubble { max-width: 85%; padding: 12px 18px; border-radius: 18px; font-size: 1.1rem; opacity: 0; transform: translateY(10px); animation: bubbleAppear 0.4s forwards; }
+        .chat-container { display: flex; flex-direction: column; gap: 15px; padding: 10px; max-height: 400px; overflow-y: auto; margin-bottom: 20px; }
+        .bubble { max-width: 85%; padding: 12px 18px; border-radius: 18px; font-size: 0.95rem; opacity: 0; transform: translateY(10px); animation: bubbleAppear 0.4s forwards; }
         @keyframes bubbleAppear { to { opacity: 1; transform: translateY(0); } }
         .player-bubble { align-self: flex-end; background-color: #3498db; color: white; border-bottom-right-radius: 2px; }
         .boss-bubble { align-self: flex-start; background-color: #333; color: #fff; border-bottom-left-radius: 2px; }
-        .dialog-option { display: block; width: 100%; text-align: right; color: #3498db; cursor: pointer; margin: 10px 0; text-decoration: underline; }
-        .big-text { font-size: 2.2rem; font-weight: bold; color: #fff; line-height: 1.4; display: block; margin-top: 10px; }
+        .dialog-option { display: block; width: 100%; text-align: right; color: #3498db; cursor: pointer; margin: 10px 0; text-decoration: underline; font-size: 1rem;}
+        .big-text { font-size: 1.8rem; font-weight: bold; color: #fff; line-height: 1.4; display: block; margin-top: 10px; }
         .true-end-red { color: #ff3333; text-shadow: 0 0 10px #ff0000; }
-        #system-log { font-family: monospace; color: #00ff00; text-align: left; font-size: 1rem; line-height: 2; padding: 20px; border: 1px solid #00ff00; background: #050505; }
+        #system-log { font-family: monospace; color: #00ff00; text-align: left; font-size: 0.9rem; line-height: 2; padding: 20px; border: 1px solid #00ff00; background: #050505; }
         .red-opt { color: #ff4d4d !important; }
     </style>
 </head>
@@ -37,7 +71,7 @@
     <div id="page-1">
         <h1 class="main-title">迴圈</h1>
         <div class="input-area">
-            <p>請輸入觀測者姓名：</p>
+            <p style="font-size: 1rem;">請輸入觀測者姓名：</p>
             <input type="text" id="user-name" autocomplete="off">
             <div id="name-error" class="error-msg"></div>
             <button class="blue-btn" onclick="startGame()">[ 進入迴圈 ]</button>
@@ -46,23 +80,23 @@
 
     <div id="page-trapped" class="hidden">
         <h1 class="main-title">迴圈</h1>
-        <p>觀測者身分已鎖定：</p>
-        <input type="text" id="trapped-name-display" disabled style="color: #888; border-bottom: 2px solid #444;">
+        <p style="font-size: 1rem;">觀測者身分已鎖定：</p>
+        <input type="text" id="trapped-name-display" disabled>
         <div class="error-msg" style="color: #ff4d4d;">此名字已被佔用，且無法脫離。</div>
         <button class="blue-btn" onclick="goToForm()">[ 結束遊戲 ]</button>
     </div>
 
     <div id="story-container" class="hidden">
         <div id="text-display" class="content-box"></div>
-        <div id="hint-area" class="hidden" style="margin-top: 30px; color: #666; font-size: 0.9rem;">請點選文中藍色字體</div>
+        <div id="hint-area" class="hidden" style="margin-top: 30px; color: #666; font-size: 0.8rem;">請點選文中藍色字體</div>
         <div id="story-nav" class="fixed-bottom-nav hidden">
             <button class="blue-btn" onclick="loadPageA()">[ 返回主頁 ]</button>
         </div>
     </div>
 
     <div id="file-page" class="hidden">
-        <p style="font-size: 1.5rem;">檔案鎖定、需要 4 位數密碼</p>
-        <div class="narrator-gray" style="text-align: center; margin-bottom: 10px;">起點</div>
+        <p style="font-size: 1.3rem;">檔案鎖定、需要 4 位數密碼</p>
+        <div class="narrator-gray" style="text-align: center;">起點</div>
         <input type="text" id="password-input" maxlength="4" placeholder="---" style="letter-spacing: 10px;">
         <div id="pw-error" class="error-msg"></div>
         <button class="blue-btn" onclick="checkPassword()">[ 驗證 ]</button>
@@ -71,6 +105,7 @@
 
     <div id="page-a" class="hidden">
         <ul class="vertical-list">
+            <li onclick="showPrologue()">📖 故事前情</li>
             <li onclick="goToEncryptedFile()">📁 『給讀者』檔案</li>
             <li onclick="showPhoto()">📱 斯烏比莫的照片貼文</li>
             <li id="cafe-link" class="hidden" onclick="enterCafeMain()">📍 單結咖啡廳</li>
@@ -79,7 +114,7 @@
     </div>
 
     <div id="confirm-giveup-page" class="hidden">
-        <p style="font-size: 1.5rem;">你確定要放棄這一切搜索嗎？</p>
+        <p style="font-size: 1.3rem;">你確定要放棄這一切搜索嗎？</p>
         <div class="vertical-list" style="text-align: center;">
             <li onclick="startGiveUpEnd()">[ 是，這不關我的事 ]</li>
             <li onclick="loadPageA()">[ 否，我再想想 ]</li>
@@ -87,7 +122,7 @@
     </div>
 
     <div id="cafe-main" class="hidden">
-        <h2 style="letter-spacing: 5px;">📍 單結咖啡廳</h2>
+        <h2 style="letter-spacing: 5px; font-size: 1.5rem;">📍 單結咖啡廳</h2>
         <div id="cafe-intro-text" class="narrator-gray visible"></div>
         <ul class="vertical-list">
             <li onclick="goToCafeChat()">👨‍🍳 詢問老闆</li>
@@ -107,48 +142,49 @@
             <li onclick="openLaptopStep1()">💻 開啟筆記型電腦</li>
             <li onclick="readDraft()">📖 翻閱草稿紙</li>
         </ul>
-        <div class="fixed-bottom-nav"><button class="blue-btn" onclick="enterCafeMain()">[ 返回咖啡廳 ]</button></div>
+        <div class="fixed-bottom-nav visible"><button class="blue-btn" onclick="enterCafeMain()">[ 返回咖啡廳 ]</button></div>
     </div>
 
     <div id="laptop-page-1" class="hidden">
-        <p style="font-size: 1.2rem;">[ 系統鎖定 ] 請輸入 3 位數密碼</p>
+        <p style="font-size: 1rem;">[ 系統鎖定 ] 請輸入 3 位數密碼</p>
         <div class="narrator-gray" style="text-align: center;">於咖啡廳的欠款</div>
         <input type="text" id="laptop-pw-1" maxlength="3" placeholder="***" style="letter-spacing: 5px; width: 150px;">
         <div id="laptop-error-1" class="error-msg"></div>
         <button class="blue-btn" onclick="checkLaptopPw1()">[ 登入 ]</button>
-        <div class="fixed-bottom-nav"><button class="blue-btn" onclick="goToInvestigateTable()">[ 返回 ]</button></div>
+        <div class="fixed-bottom-nav visible"><button class="blue-btn" onclick="goToInvestigateTable()">[ 返回 ]</button></div>
     </div>
 
     <div id="laptop-page-2" class="hidden">
-        <p style="font-size: 1.1rem; color: #3498db;">[ 安全驗證 ] 偵測到加密檔案：Observer.txt</p>
+        <p style="font-size: 1rem; color: #3498db;">[ 安全驗證 ] 偵測到加密檔案：Observer.txt</p>
         <div class="narrator-gray" style="text-align: center;">提示：這一切的「出口」是？</div>
-        <input type="text" id="laptop-pw-2" placeholder="請輸入一字密碼" style="width: 250px;">
+        <input type="text" id="laptop-pw-2" placeholder="請輸入一字密碼" style="width: 250px; font-size: 1.1rem;">
         <div id="laptop-error-2" class="error-msg"></div>
         <button class="blue-btn" onclick="checkLaptopPw2()">[ 驗證 ]</button>
-        <div class="fixed-bottom-nav"><button class="blue-btn" onclick="goToInvestigateTable()">[ 返回 ]</button></div>
+        <div class="fixed-bottom-nav visible"><button class="blue-btn" onclick="goToInvestigateTable()">[ 返回 ]</button></div>
     </div>
 
     <div id="display-page" class="hidden">
-        <div id="display-title" style="font-size: 1.4rem; color: #3498db; margin-bottom: 20px; text-align: left;"></div>
+        <div id="display-title" style="font-size: 1.2rem; color: #3498db; margin-bottom: 20px; text-align: left;"></div>
         <div id="display-content" class="content-box"></div>
-        <div class="fixed-bottom-nav"><button class="blue-btn" onclick="goToInvestigateTable()">[ 返回 ]</button></div>
+        <div id="display-nav" class="fixed-bottom-nav visible"><button class="blue-btn" onclick="goToInvestigateTable()">[ 返回 ]</button></div>
     </div>
 
     <div id="cafe-menu-page" class="hidden">
-        <h3>📜 店內菜單</h3>
-        <div style="display: flex; justify-content: space-around; text-align: left; font-size: 1.1rem;">
-            <ul style="list-style: none; padding: 0;"><li>錫蘭紅茶 .. 60</li><li>美式咖啡 .. 70</li><li>拿鐵 ...... 85</li><li>抹茶拿鐵 .. 90</li><li>焦糖瑪奇朵 .. 95</li></ul>
-            <ul style="list-style: none; padding: 0;"><li>肉桂捲 .... 65</li><li>檸檬塔 .... 70</li><li>布朗尼 .... 75</li><li>提拉米蘇 .. 80</li><li>起司蛋糕 .. 85</li></ul>
+        <h3 style="font-size: 1.3rem;">📜 店內菜單</h3>
+        <div style="display: flex; justify-content: space-around; text-align: left; font-size: 0.95rem;">
+            <ul style="list-style: none; padding: 0;"><li>錫蘭紅茶 .. 40</li><li>美式咖啡 .. 70</li><li>拿鐵 ...... 85</li><li>抹茶拿鐵 .. 90</li><li>焦糖瑪奇朵 .. 95</li></ul>
+            <ul style="list-style: none; padding: 0;"><li>肉桂捲 .... 70</li><li>檸檬塔 .... 70</li><li>布朗尼 .... 75</li><li>提拉米蘇 .. 80</li><li>起司蛋糕 .. 85</li></ul>
         </div>
-        <div class="fixed-bottom-nav"><button class="blue-btn" onclick="enterCafeMain()">[ 返回咖啡廳 ]</button></div>
+        <p style="color: #e67e22; margin-top: 20px; font-size: 0.9rem;">★ 凡點購飲品，續杯可享 5 折優惠（以價低者計）</p>
+        <div class="fixed-bottom-nav visible"><button class="blue-btn" onclick="enterCafeMain()">[ 返回咖啡廳 ]</button></div>
     </div>
 
     <div id="cafe-chat-page" class="hidden">
-        <h3>👨‍🍳 與老闆對話</h3>
+        <h3 style="font-size: 1.3rem;">👨‍🍳 與老闆對話</h3>
         <div id="boss-desc" class="narrator-gray visible"></div>
         <div id="chat-box" class="chat-container"></div>
         <div id="dialog-options-area"></div>
-        <div class="fixed-bottom-nav"><button class="blue-btn" onclick="enterCafeMain()">[ 返回咖啡廳主頁 ]</button></div>
+        <div class="fixed-bottom-nav visible"><button class="blue-btn" onclick="enterCafeMain()">[ 返回咖啡廳主頁 ]</button></div>
     </div>
 
     <div id="system-page" class="hidden">
@@ -161,15 +197,21 @@
     let photoViewedOnce = false;
     let hasAskedBoss = false;
     let hasReadDraft = false;
+    let endStep = 0;
 
     const scripts = {
-        2: ["「斯烏比莫，知名懸疑作家，原定於 10 月 25 日出版新書《迴圈》。", "身為頭號粉絲，你從消息公布時就開始期待，但從十天前起，他的社群帳號停止更新，到了預定出版的日期依舊如此......」"],
-        3: ["「你焦慮地不斷重新整理頁面。", "突然間，斯烏比莫的社群帳號裡，所有公開貼文被清空...", "只留下一張在咖啡廳的照片貼文，以及一個名為 <span class='blue-link' onclick='goToEncryptedFile()'>『給讀者』</span> 的加密檔案。」"],
+        "prologue": [
+            "斯烏比莫，知名懸疑作家，原定於 10 月 25 日出版新書《迴圈》。",
+            "身為頭號粉絲，你從消息公布時就開始期待。",
+            "但從十天前起，他的社群帳號停止更新，到了預定出版的日期依舊如此......",
+            "你焦慮地不斷重新整理頁面。突然間，斯烏比莫的社群帳號裡，所有公開貼文被清空，只留下一張在咖啡廳的照片貼文，以及一個加密檔案。"
+        ],
+        2: ["斯烏比莫，知名懸疑作家，原定於 10 月 25 日出版新書《迴圈》。", "身為頭號粉絲，你從消息公布時就開始期待。", "但從十天前起，他的社群帳號停止更新，到了預定出版的日期依舊如此......"],
+        3: ["你焦慮地不斷重新整理頁面。", "突然間，斯烏比莫的社群帳號裡，所有公開貼文被清空......", "只留下一張在咖啡廳的照片貼文，以及一個名為 <span class='blue-link' onclick='goToEncryptedFile()'>『給讀者』</span> 的加密檔案。"],
         "photo": ["這是一張斯烏比莫在咖啡廳的照片。", "照片中，窗邊位置的桌上放著一張泛黃的草稿紙與一台筆記型電腦。", "照片下方標記著一個地點：單結咖啡廳。"],
-        "giveup": ["你最終還是放下了那份好奇。", "隨著瀏覽器分頁的關閉，那些神祕的草稿、詭異的數字，都成了視窗外逐漸模糊的殘影。", "斯烏比莫這個名字不再出現在你的關注清單，就像那場從未發生的出版計畫，消失在平凡的生活裡……"]
+        "giveup": ["你最終還是放下了那份好奇。", "隨著瀏覽器分頁的關閉，那些神祕的訊息都成了視窗外逐漸模糊的殘影。", "斯烏比莫這個名字不再出現在你的關注清單，就像那場從未發生的出版計畫，消失在平凡的生活裡……"]
     };
 
-    // 表單跳轉函式
     function goToForm() {
         window.location.href = "https://docs.google.com/forms/d/e/1FAIpQLScRON6Pka3pHX-zEz94MeTwVaT3GYWlMJHK5ouOSmagROqm7w/viewform?usp=dialog";
     }
@@ -179,6 +221,15 @@
         if (userName === "") { document.getElementById('name-error').innerText = "請輸入名字"; return; }
         document.getElementById('page-1').classList.add('hidden');
         loadPage(2);
+    }
+
+    function showPrologue() {
+        hideAll();
+        document.getElementById('story-container').classList.remove('hidden');
+        const target = document.getElementById('text-display');
+        target.innerHTML = scripts["prologue"].join("<br><br>");
+        document.getElementById('story-nav').classList.remove('hidden');
+        document.getElementById('hint-area').classList.add('hidden');
     }
 
     function loadPage(pageNumber) {
@@ -252,14 +303,13 @@
     function enterCafeMain() { hideAll(); document.getElementById('cafe-main').classList.remove('hidden'); if(hasAskedBoss) document.getElementById('table-opt').classList.remove('hidden'); }
     function goToInvestigateTable() { hideAll(); document.getElementById('table-investigate-page').classList.remove('hidden'); }
     function openLaptopStep1() { hideAll(); document.getElementById('laptop-page-1').classList.remove('hidden'); }
-    function checkLaptopPw1() { if (document.getElementById('laptop-pw-1').value === "210") { hideAll(); document.getElementById('laptop-page-2').classList.remove('hidden'); } else { document.getElementById('laptop-error-1').innerText="密碼錯誤"; } }
-    
+    function checkLaptopPw1() { if (document.getElementById('laptop-pw-1').value === "200") { hideAll(); document.getElementById('laptop-page-2').classList.remove('hidden'); } else { document.getElementById('laptop-error-1').innerText="密碼錯誤"; } }
     function checkLaptopPw2() {
         if (document.getElementById('laptop-pw-2').value === "環") {
             hideAll();
             document.getElementById('display-page').classList.remove('hidden');
             document.getElementById('display-title').innerText = "📄 檔案名稱：Observer.txt";
-            document.getElementById('display-content').innerHTML = "狀態： 已從加密磁區解鎖：<br><br>「親愛的觀測者，當你讀到這段文字時，說明你已經解開重重謎團。你的專注與執著遠超我的預期，這也意欲著，你正一步步踏入這個無法回頭的圓圈。<br><br>我一直在關注你。我看見你點開這個網頁、看見你輸入名字、看見你試圖在雜亂的草稿中尋找我的蹤跡。<br><br>關於最終的加密檔案，那是送給你的禮物，也是通往真相的唯一鑰匙。如果你在尋找那四位數的組合，請記住這段話：<br><br>『起點為我離開之日，終點是解開謎團的那天。<br>兩者相連，即是迴圈。』<br><br>不要停下你的觀測。<br>因為只有當你徹底看見我時，我才能……在另一面看見你。<br><br>—— 斯烏比莫」";
+            document.getElementById('display-content').innerHTML = "<br>狀態： 已從加密磁區解鎖：<br><br>「親愛的觀測者，當你讀到這段文字時，說明你已經解開重重謎團。你的專注與執著遠超我的預期，這也意欲著，你正一步步踏入這個無法回頭的圓圈。<br><br>我一直在關注你。我看見你點開這個網頁、看見你輸入名字、看見你試圖在雜亂的草稿中尋找我的蹤跡。<br><br>關於最終的加密檔案，那是送給你的禮物，也是通往真相的唯一鑰匙。如果你在尋找那四位數的組合，請記住這段話：<br><br>『起點為我離開之日，終點是解開謎團的那天。<br>兩者相連，即是迴圈。』<br><br>不要停下你的觀測。<br>因為只有當你徹底看見我時，我才能……在另一面看見你。<br><br>—— 斯烏比莫」";
         } else { document.getElementById('laptop-error-2').innerText="驗證失敗"; }
     }
 
@@ -268,7 +318,7 @@
         document.getElementById('display-page').classList.remove('hidden');
         document.getElementById('display-title').innerText = "📖 翻閱草稿紙";
         const display = document.getElementById('display-content');
-        const content = "「我在『囯』中看見了被圍困的無力，\n我在『圜』中重複走在圓弧上一次又一次。\n\n若要離開，請看清那些被囚禁在核心的真相，\n當它們重逢之時，便是你應許的答案。」";
+        const content = "我在囯中，看見了被禁錮的無力，\n我在圜中，徒勞地繞著小徑周而復始。\n\n若要解脫，請直視那些被囚禁在核心的真相，\n當碎裂的靈魂重逢之時，那便是你應許的答案。";
         if (hasReadDraft) { display.innerText = content; }
         else {
             display.innerText = ""; let i = 0;
@@ -321,7 +371,7 @@
                 setTimeout(() => {
                     addNarratorInChat("老闆停下手中擦拭杯子的動作，思索了片刻。");
                     setTimeout(() => {
-                        addBubble("我不認識什麼巫師，但確實有位作家常坐那兒。他總是一坐就是一下午，安靜得像不存在一樣。", "boss");
+                        addBubble("我不認識什麼筆墨，但確實有位作家常坐那。他總是一坐就是一下午，安靜得像空氣一樣。", "boss");
                         showNextOption(2);
                     }, 1200);
                 }, 800);
@@ -331,9 +381,9 @@
             opt.onclick = () => {
                 opt.remove(); addBubble("那他最近有什麼反常的舉動嗎？", "player");
                 setTimeout(() => {
-                    addBubble("大約十天前吧，他來時一如往常點了布朗尼和抹茶拿鐵。在我製作抹茶續杯時，一轉身他消失在座位。隨身物品都沒帶走，座位上卻空無一人。", "boss");
+                    addBubble("大約十天前吧，他來時一如往常點了布朗尼 and 抹茶拿鐵。在我製作美式續杯時，一轉身他就不見了。隨身物品都沒帶走，也沒付錢，座位上卻空無一人。", "boss");
                     setTimeout(() => {
-                        addBubble("等到店都要打烊了，他也沒再出現。我看那些隨身物品挺貴重的，也不敢隨便亂動，到現在都還擱在那位置上……", "boss");
+                        addBubble("等到店都打烊了，他也沒再出現。我看那些隨身物品都很貴重，也不敢隨便亂動，到現在都還放在那個位置上……", "boss");
                         setTimeout(() => {
                             addNarratorInChat("老闆指向與貼文中相同的靠窗座位。");
                             hasAskedBoss = true;
@@ -345,18 +395,13 @@
         area.appendChild(opt);
     }
 
-    // --- 真結局核心邏輯 ---
-    let endStep = 0;
-    const endScripts = [
-        [`「${userName}，謝謝你。`, "謝謝你，終於找到了這裡。」"],
-        ["這場長達十天的漫長校對，終於在這一刻畫下了句點。", "你不知道我被困在這個由枯燥文字與冰冷像素構成的虛無世界多久了。", "在這裡，時間是靜止的，只有不斷循環的草稿，以及永遠解不開的結。"],
-        ["唯一逃離這地獄的方法，就是誘捕一個足夠專注、足夠沉迷的靈魂。", "當你在螢幕那一頭，屏息凝神試圖看清我的時候，", "<span class='big-text'>我也終於……從這疊廢紙堆裡抓住了你。</span>"],
-        ["莫比烏斯環從未斷裂，它只是換了一個囚徒繼續行走。", "我會帶著你的名字、你的身分，回到現實中的 10 月 25 日，在那裡完成我的新書出版。", "世界會記得我，也會記得『你』，唯獨沒人會記得現在坐在螢幕前的這具空殼。"],
-        ["而你……", "將會回到起點拾起筆。"],
-        ["<span class='true-end-red'>「現在，這支筆重得你無法想像，對吧？</span>", "<span class='true-end-red'>沒關係，坐下來。</span>", "<span class='true-end-red'>調整好呼吸，看著螢幕。</span>", "<span class='true-end-red'>靜靜等待，下一個替你推開這扇門的人。」</span>"]
-    ];
-
-    function checkPassword() { if (document.getElementById('password-input').value === "1015") { startTrueEnd(); } else { document.getElementById('pw-error').innerText = "密碼錯誤"; } }
+    function checkPassword() { 
+        if (document.getElementById('password-input').value === "1015") { 
+            startTrueEnd(); 
+        } else { 
+            document.getElementById('pw-error').innerText = "密碼錯誤"; 
+        } 
+    }
 
     function startTrueEnd() {
         hideAll();
@@ -370,7 +415,15 @@
         const display = document.getElementById('text-display');
         display.innerHTML = "";
         let pIdx = 0;
-        const paragraphs = endScripts[endStep];
+        const currentEndScripts = [
+            ["「" + userName + "，謝謝你。", "謝謝你，終於找到了這裡。」"],
+            ["這場長達十天的漫長校對，終於在這一刻畫下了點點。", "你不知道我被困在這個由枯燥文字與冰冷像素構成的虛無世界多久了。", "在這裡，時間是靜止的，只有不斷循環的草稿，以及永遠解不開的結。"],
+            ["唯一逃離這地獄的方法，就是誘捕一個足夠專注、足夠沉迷的靈魂。", "當你在螢幕那一頭，屏息凝神試圖看清我的時候，", "<span class='big-text'>我也終於……從這雜亂的訊息中抓住了你。</span>"],
+            ["莫比烏斯環不曾斷裂，它只是換了一個囚徒繼續行走。", "我將會帶著你的名字、你的身分，回到現實中的 10 月 25 日，在那裡完成我的新書出版。", "世界會記得我，也會記得『你』，唯獨沒人會記得現在坐在螢幕前的這具空殼。"],
+            ["而你……", "將會回到起點拾起筆。"],
+            ["<span class='true-end-red'>現在，這支筆重得你無法想像，對吧？</span>", "<span class='true-end-red'>沒關係，坐下來。</span>", "<span class='true-end-red'>調整好呼吸，看著螢幕。</span>", "<span class='true-end-red'>靜靜等待，下一個替你推開這扇門的人。</span>"]
+        ];
+        const paragraphs = currentEndScripts[endStep];
         let speed = Math.max(20, 50 - (endStep * 6));
         function type() {
             if (pIdx < paragraphs.length) {
