@@ -32,6 +32,7 @@
         
         @media (max-width: 600px) {
             h1.main-title { font-size: 2.5rem; letter-spacing: 10px; }
+            .big-text { font-size: 1.4rem !important; } /* 針對手機端優化結局大字 */
         }
 
         input[type="text"] { background: transparent; border: none; border-bottom: 2px solid #fff; color: #fff; font-size: 1.3rem; padding: 10px; width: 80%; max-width: 300px; text-align: center; outline: none; }
@@ -438,7 +439,7 @@
 
     function playEndPara() {
         const display = document.getElementById('text-display');
-        display.innerHTML = ""; // 核心修正：每次開始新段落時先清空畫面
+        display.innerHTML = ""; // 進入新段落前清空
         let pIdx = 0;
         
         const currentEndScripts = [
@@ -453,45 +454,43 @@
         const paragraphs = currentEndScripts[endStep];
         let speed = Math.max(20, 50 - (endStep * 6));
 
-        function type() {
+        function typeLine() {
             clearTimeout(currentTypeTimeout);
             if (pIdx < paragraphs.length) {
                 let charIdx = 0;
                 let currentLine = paragraphs[pIdx];
-                let base = display.innerHTML + (pIdx > 0 ? "<br><br>" : "");
+                // 核心修復：每行打字前清空內容，防止重疊
+                display.innerHTML = ""; 
                 
                 function charLoop() {
                     if (charIdx < currentLine.length) {
                         if (currentLine[charIdx] === '<') {
                             let end = currentLine.indexOf('>', charIdx);
-                            display.innerHTML = base + currentLine.substring(0, end + 1);
+                            display.innerHTML = currentLine.substring(0, end + 1);
                             charIdx = end + 1;
                         } else { 
-                            display.innerHTML = base + currentLine.substring(0, charIdx + 1); 
+                            display.innerHTML = currentLine.substring(0, charIdx + 1); 
                             charIdx++; 
                         }
                         currentTypeTimeout = setTimeout(charLoop, speed);
                     } else { 
+                        // 一行打完後，等 1.5 秒讓玩家讀完，再清空打下一行
                         pIdx++; 
-                        currentTypeTimeout = setTimeout(type, 800); 
+                        currentTypeTimeout = setTimeout(typeLine, 1500); 
                     }
                 }
                 charLoop();
             } else {
-                // 目前頁面所有行都打完了
+                // 該頁面所有行都打完了
                 if (endStep < 5) { 
-                    // 停留 2 秒後，清空畫面並進入下一段
-                    currentTypeTimeout = setTimeout(() => { 
-                        endStep++; 
-                        display.innerHTML = ""; // 清空畫面
-                        playEndPara(); 
-                    }, 2000); 
+                    endStep++; 
+                    currentTypeTimeout = setTimeout(playEndPara, 1000); 
                 } else { 
                     currentTypeTimeout = setTimeout(showSystemSync, 2000); 
                 }
             }
         }
-        type();
+        typeLine();
     }
 
     function showSystemSync() {
