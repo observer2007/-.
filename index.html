@@ -40,6 +40,7 @@
         @keyframes bubbleAppear { to { opacity: 1; transform: translateY(0); } }
         .player-bubble { align-self: flex-end; background-color: #3498db; color: white; border-bottom-right-radius: 2px; }
         .boss-bubble { align-self: flex-start; background-color: #333; color: #fff; border-bottom-left-radius: 2px; }
+        .dialog-option { display: block; width: 100%; text-align: right; color: #3498db; cursor: pointer; margin: 10px 0; text-decoration: underline; }
         .big-text { font-size: 1.8rem; font-weight: bold; color: #fff; line-height: 1.4; display: block; margin-top: 10px; }
         .true-end-red { color: #ff3333; text-shadow: 0 0 10px #ff0000; }
         #system-log { font-family: monospace; color: #00ff00; text-align: left; font-size: 0.9rem; line-height: 1.8; padding: 20px; border: 1px solid #00ff00; background: #050505; }
@@ -180,7 +181,7 @@
 
     const scripts = {
         "prologue": ["斯烏比莫，知名懸疑作家，原定於 10 月 25 日出版新書《迴圈》。", "身為頭號粉絲，你從消息公布時就開始期待。", "但從十天前起，他的社群帳號停止更新，到了預定出版的日期依舊如此......", "你焦慮地不斷重新整理頁面。突然間，斯烏比莫的社群帳號裡，所有公開貼文被清空，只留下一張在咖啡廳的照片貼文，以及一個加密檔案。"],
-        2: ["斯烏比莫，知名懸疑作家，原定於 10 月 25 日出版新書《迴圈》。", "身為頭號粉絲，你從消息公布時就開始期待。", "但從十天前起， his 社群帳號停止更新，到了預定出版的日期依舊如此......"],
+        2: ["斯烏比莫，知名懸疑作家，原定於 10 月 25 日出版新書《迴圈》。", "身為頭號粉絲，你從消息公布時就開始期待。", "但從十天前起，他的社群帳號停止更新，到了預定出版的日期依舊如此......"],
         3: ["你焦慮地不斷重新整理頁面。", "突然間，斯烏比莫的社群帳號裡，所有公開貼文被清空......", "只留下一張在咖啡廳的照片貼文，以及一個名為 <span class='blue-link' onclick='goToEncryptedFile()'>『給讀者』</span> 的加密檔案。"],
         "photo": ["這是一張斯烏比莫在咖啡廳的照片。", "照片中，窗邊位置的桌上放著一張泛黃的草稿紙與一台筆記型電腦。", "照片下方標記著一個地點：單結咖啡廳。"],
         "giveup": ["你最終還是放下了那份好奇。", "隨著瀏覽器分頁的關閉，那些神祕的訊息都成了視窗外逐漸模糊的殘影。", "斯烏比莫這個名字不再出現在你的關注清單，就像那場從未發生的出版計畫，消失在平凡的生活裡……"]
@@ -199,6 +200,7 @@
         document.getElementById('story-nav').classList.add('hidden');
         const paragraphs = scripts[pageNumber];
         if (pageNumber === "photo" && photoViewedOnce) { target.innerHTML = paragraphs.join("<br><br>"); document.getElementById('story-nav').classList.remove('hidden'); return; }
+        
         let pIndex = 0;
         function type() {
             if (pIndex < paragraphs.length) {
@@ -241,27 +243,26 @@
     function showNextOption(step) {
         const area = document.getElementById('dialog-options-area'); area.innerHTML = ""; const opt = document.createElement('div'); opt.className = 'dialog-option';
         if (step === 1) { opt.innerText = "「請問您知道『斯烏比莫』這位作家嗎？」"; opt.onclick = () => { opt.remove(); addBubble("請問您知道『斯烏比莫』這位作家嗎？", "player"); setTimeout(() => { addNarratorInChat("老闆停下手中擦拭杯子的動作，思索了片刻。"); setTimeout(() => { addBubble("我不認識什麼筆墨，但確實有位作家常坐那。他總是一坐就是一下午，安靜得像空氣一樣。", "boss"); showNextOption(2); }, 1200); }, 800); }; } 
-        else if (step === 2) { opt.innerText = "「那他最近有什麼反常的舉動嗎？」"; opt.onclick = () => { opt.remove(); addBubble("那他最近有什麼反常的舉動嗎？", "player"); setTimeout(() => { addBubble("大約十天前吧，他來時一如往常點了布朗尼跟抹茶拿鐵。在我製作美式續杯時，一轉眼他就消失了。隨身物品都沒帶走，也沒付錢，座位上卻空無一人。", "boss"); setTimeout(() => { addBubble("等到店都打烊了，他也沒再出現。我看那些隨身物品都很貴重，也不敢隨便亂動，到現在都還放在那個位置上……", "boss"); setTimeout(() => { addNarratorInChat("老闆指向與貼文中相同的靠窗座位。"); hasAskedBoss = true; }, 1000); }, 1500); }, 800); }; }
+        else if (step === 2) { opt.innerText = "「那他最近有什麼反常的舉動嗎？」"; opt.onclick = () => { opt.remove(); addBubble("那他最近有什麼反常的舉動嗎？", "player"); setTimeout(() => { addBubble("大約十天前吧，他來時一如往常點了布朗尼跟美式咖啡，隨後又續了一杯抹茶。在我製作續杯時，一轉眼他就消失了。隨身物品都沒帶走，也沒付錢，座位上卻空無一人。", "boss"); setTimeout(() => { addBubble("等到店都打烊了，他也沒再出現。我看那些隨身物品都很貴重，也不敢隨便亂動，到現在都還放在那個位置上……", "boss"); setTimeout(() => { addNarratorInChat("老闆指向與貼文中相同的靠窗座位。"); hasAskedBoss = true; }, 1000); }, 1500); }, 800); }; }
         area.appendChild(opt);
     }
 
-    // --- 真結局核心優化 ---
+    // --- 真結局核心修正：獨立分頁模式 ---
     let endStep = 0;
     function checkPassword() { if (document.getElementById('password-input').value === "1015") { startTrueEnd(); } else { document.getElementById('pw-error').innerText = "密碼錯誤"; } }
 
     function startTrueEnd() {
         hideAll();
-        if(document.getElementById('hint-area')) document.getElementById('hint-area').remove(); 
+        if(document.getElementById('hint-area')) document.getElementById('hint-area').remove(); // 徹底移除提示
         const navs = document.querySelectorAll('.fixed-bottom-nav');
         navs.forEach(n => n.remove());
         document.getElementById('story-container').classList.remove('hidden');
         playEndPara();
     }
 
-    // 這裡徹底重寫，讓它變成「每段清空一次」的模式
     function playEndPara() {
         const display = document.getElementById('text-display');
-        display.innerHTML = ""; // 關鍵：顯示下一段前保證全空
+        display.innerHTML = ""; // 每次進入新一段前，確保畫布清空
         
         const currentEndScripts = [
             [" " + userName + "，謝謝你。", "謝謝你，終於找到了這裡。"],
@@ -278,18 +279,33 @@
 
         function type() {
             if (pIdx < paragraphs.length) {
-                let charIdx = 0; let current = paragraphs[pIdx]; let base = display.innerHTML + (pIdx > 0 ? "<br><br>" : "");
+                let charIdx = 0; let currentPara = paragraphs[pIdx]; 
+                let baseHTML = display.innerHTML + (pIdx > 0 ? "<br><br>" : "");
                 function charLoop() {
-                    if (charIdx < current.length) {
-                        if (current[charIdx] === '<') { let end = current.indexOf('>', charIdx); display.innerHTML = base + current.substring(0, end + 1); charIdx = end + 1; } 
-                        else { display.innerHTML = base + current.substring(0, charIdx + 1); charIdx++; }
+                    if (charIdx < currentPara.length) {
+                        if (currentPara[charIdx] === '<') { 
+                            let end = currentPara.indexOf('>', charIdx); 
+                            display.innerHTML = baseHTML + currentPara.substring(0, end + 1); 
+                            charIdx = end + 1; 
+                        } 
+                        else { 
+                            display.innerHTML = baseHTML + currentPara.substring(0, charIdx + 1); 
+                            charIdx++; 
+                        }
                         setTimeout(charLoop, speed);
-                    } else { pIdx++; setTimeout(type, 800); }
+                    } else { pIdx++; setTimeout(type, 1000); }
                 }
                 charLoop();
             } else {
+                // 每段打字結束後的換頁邏輯
                 if (endStep < 5) { 
-                    setTimeout(() => { endStep++; playEndPara(); }, 1200); 
+                    setTimeout(() => { 
+                        display.innerHTML = ""; // 離開前清空畫面
+                        setTimeout(() => { // 給瀏覽器短暫緩衝時間確保清空渲染
+                            endStep++; 
+                            playEndPara(); 
+                        }, 50);
+                    }, 1200); // 閱讀停留時間
                 } else { 
                     setTimeout(showSystemSync, 1500); 
                 }
