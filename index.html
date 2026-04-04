@@ -438,7 +438,7 @@
 
     function playEndPara() {
         const display = document.getElementById('text-display');
-        display.innerHTML = "";
+        display.innerHTML = ""; // 核心修正：每次開始新段落時先清空畫面
         let pIdx = 0;
         
         const currentEndScripts = [
@@ -472,18 +472,18 @@
                         }
                         currentTypeTimeout = setTimeout(charLoop, speed);
                     } else { 
-                        // 當前這一行打完了
                         pIdx++; 
-                        // 檢查是否還有下一行，有的話等 800ms 再開始下一行
                         currentTypeTimeout = setTimeout(type, 800); 
                     }
                 }
                 charLoop();
             } else {
-                // 目前頁面所有段落都打完了，才啟動「進入下一段」或「進入系統同步」的 2 秒倒數
+                // 目前頁面所有行都打完了
                 if (endStep < 5) { 
+                    // 停留 2 秒後，清空畫面並進入下一段
                     currentTypeTimeout = setTimeout(() => { 
                         endStep++; 
+                        display.innerHTML = ""; // 清空畫面
                         playEndPara(); 
                     }, 2000); 
                 } else { 
