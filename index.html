@@ -16,6 +16,25 @@
             margin: 0; 
             overflow-y: auto; 
             line-height: 1.8; 
+            transition: backgrou<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>迴圈 - 互動敘事</title>
+    <style>
+        /* 手機版優化 */
+        body { 
+            background-color: #000; 
+            color: #fff; 
+            font-family: 'Courier New', Courier, 'Microsoft JhengHei', monospace; 
+            display: flex; 
+            justify-content: center; 
+            align-items: flex-start; 
+            min-height: 100vh; 
+            margin: 0; 
+            overflow-y: auto; 
+            line-height: 1.8; 
             transition: background-color 3s; 
             padding: 20px 0;
         }
@@ -31,10 +50,10 @@
         .narrator-gray { color: #a0a0a0; font-style: italic; font-size: 0.9rem; margin-bottom: 20px; text-align: left; }
         .blue-link { color: #3498db; text-decoration: underline; cursor: pointer; font-weight: bold; }
         .vertical-list { list-style: none; padding: 0; text-align: left; font-size: 1.2rem; }
-        .vertical-list li { margin: 20px 0; cursor: pointer; }
+        .vertical-list li { margin: 25px 0; cursor: pointer; }
         .vertical-list li:hover { color: #3498db; }
         
-        /* 確保「詢問老闆」是藍字底線 */
+        /* 選項藍字底線 */
         .boss-ask-btn { color: #3498db !important; text-decoration: underline !important; font-weight: bold; }
         
         .fixed-bottom-nav { margin-top: 40px; border-top: 1px dashed #333; padding-top: 10px; }
@@ -43,9 +62,9 @@
         @keyframes bubbleAppear { to { opacity: 1; transform: translateY(0); } }
         .player-bubble { align-self: flex-end; background-color: #3498db; color: white; border-bottom-right-radius: 2px; }
         .boss-bubble { align-self: flex-start; background-color: #333; color: #fff; border-bottom-left-radius: 2px; }
-        
+        .dialog-option { display: block; width: 100%; text-align: right; color: #3498db; cursor: pointer; margin: 10px 0; text-decoration: underline; }
         .big-text { font-size: 1.8rem; font-weight: bold; color: #fff; line-height: 1.4; display: block; margin-top: 10px; }
-        .true-end-red { color: #ff3333; text-shadow: 0 0 10px #ff0000; }
+        .true-end-red { color: #ff3333 !important; text-shadow: 0 0 10px #ff0000; }
         #system-log { font-family: monospace; color: #00ff00; text-align: left; font-size: 0.9rem; line-height: 1.8; padding: 20px; border: 1px solid #00ff00; background: #050505; }
         .red-opt { color: #ff4d4d !important; }
     </style>
@@ -104,59 +123,14 @@
 
     <div id="cafe-main" class="hidden">
         <h2 style="letter-spacing: 5px; font-size: 1.4rem;">📍 單結咖啡廳</h2>
-        <div id="cafe-intro-text" class="narrator-gray visible"></div>
         <ul class="vertical-list">
             <li onclick="goToCafeChat()" class="boss-ask-btn">👨‍🍳 詢問老闆</li>
             <li onclick="goToCafeMenu()">📜 查看菜單</li>
             <li id="table-opt" class="hidden" onclick="goToInvestigateTable()">☕ 調查桌子</li>
         </ul>
         <div class="fixed-bottom-nav">
-            <button class="blue-btn" onclick="loadPageA()">[ 返回主頁 ]</button><br>
-            <button class="blue-btn red-opt" onclick="confirmGiveUp()">❌ 太麻煩了，放棄搜索</button>
+            <button class="blue-btn" onclick="loadPageA()">[ 返回主頁 ]</button>
         </div>
-    </div>
-
-    <div id="table-investigate-page" class="hidden">
-        <div class="narrator-gray">桌上留著淡淡的咖啡漬，角落放著一張泛黃的草稿紙與一台筆記型電腦。</div>
-        <ul class="vertical-list">
-            <li onclick="openLaptopStep1()">💻 開啟筆記型電腦</li>
-            <li onclick="readDraft()">📖 翻閱草稿紙</li>
-        </ul>
-        <div class="fixed-bottom-nav visible"><button class="blue-btn" onclick="enterCafeMain()">[ 返回咖啡廳 ]</button></div>
-    </div>
-
-    <div id="laptop-page-1" class="hidden">
-        <p style="font-size: 1.1rem;">[ 系統鎖定 ] 請輸入 3 位數密碼</p>
-        <div class="narrator-gray" style="text-align: center;">於咖啡廳的欠款</div>
-        <input type="text" id="laptop-pw-1" maxlength="3" placeholder="***" style="letter-spacing: 5px; width: 140px;">
-        <div id="laptop-error-1" class="error-msg"></div>
-        <button class="blue-btn" onclick="checkLaptopPw1()">[ 登入 ]</button>
-        <div class="fixed-bottom-nav visible"><button class="blue-btn" onclick="goToInvestigateTable()">[ 返回 ]</button></div>
-    </div>
-
-    <div id="laptop-page-2" class="hidden">
-        <p style="font-size: 1.0rem; color: #3498db;">[ 安全驗證 ] 偵測到加密檔案：Observer.txt</p>
-        <div class="narrator-gray" style="text-align: center;">提示：一切的「出口」</div>
-        <input type="text" id="laptop-pw-2" placeholder="請輸入一字密碼" style="width: 220px;">
-        <div id="laptop-error-2" class="error-msg"></div>
-        <button class="blue-btn" onclick="checkLaptopPw2()">[ 驗證 ]</button>
-        <div class="fixed-bottom-nav visible"><button class="blue-btn" onclick="goToInvestigateTable()">[ 返回 ]</button></div>
-    </div>
-
-    <div id="display-page" class="hidden">
-        <div id="display-title" style="font-size: 1.1rem; color: #3498db; margin-bottom: 20px; text-align: left;"></div>
-        <div id="display-content" class="content-box"></div>
-        <div id="display-nav" class="fixed-bottom-nav visible"><button class="blue-btn" onclick="goToInvestigateTable()">[ 返回 ]</button></div>
-    </div>
-
-    <div id="cafe-menu-page" class="hidden">
-        <h3 style="font-size: 1.2rem;">📜 店內菜單</h3>
-        <div style="display: flex; justify-content: space-around; text-align: left; font-size: 0.95rem;">
-            <ul style="list-style: none; padding: 0;"><li>錫蘭紅茶 .. 40</li><li>美式咖啡 .. 70</li><li>拿鐵 ...... 85</li><li>抹茶拿鐵 .. 90</li><li>焦糖瑪奇朵 .. 95</li></ul>
-            <ul style="list-style: none; padding: 0;"><li>肉桂捲 .... 70</li><li>檸檬塔 .... 70</li><li>布朗尼 .... 75</li><li>提拉米蘇 .. 80</li><li>起司蛋糕 .. 85</li></ul>
-        </div>
-        <p style="color: #e67e22; margin-top: 20px; font-size: 0.9rem;">★ 凡點購飲品，續杯可享 5 折優惠</p>
-        <div class="fixed-bottom-nav visible"><button class="blue-btn" onclick="enterCafeMain()">[ 返回咖啡廳 ]</button></div>
     </div>
 
     <div id="cafe-chat-page" class="hidden">
@@ -166,10 +140,12 @@
         <div id="dialog-options-area"></div>
         <div class="fixed-bottom-nav visible"><button class="blue-btn" onclick="enterCafeMain()">[ 返回咖啡廳主頁 ]</button></div>
     </div>
-
-    <div id="system-page" class="hidden">
-        <div id="system-log"></div>
-    </div>
+    <div id="system-page" class="hidden"><div id="system-log"></div></div>
+    <div id="table-investigate-page" class="hidden"><div class="narrator-gray">桌上留著淡淡的咖啡漬，角落放著一張泛黃的草稿紙與一台筆記型電腦。</div><ul class="vertical-list"><li onclick="openLaptopStep1()">💻 開啟筆記型電腦</li><li onclick="readDraft()">📖 翻閱草稿紙</li></ul><div class="fixed-bottom-nav visible"><button class="blue-btn" onclick="enterCafeMain()">[ 返回咖啡廳 ]</button></div></div>
+    <div id="laptop-page-1" class="hidden"><p style="font-size: 1.1rem;">[ 系統鎖定 ] 請輸入 3 位數密碼</p><div class="narrator-gray" style="text-align: center;">於咖啡廳的欠款</div><input type="text" id="laptop-pw-1" maxlength="3" placeholder="***" style="letter-spacing: 5px; width: 140px;"><div id="laptop-error-1" class="error-msg"></div><button class="blue-btn" onclick="checkLaptopPw1()">[ 登入 ]</button></div>
+    <div id="laptop-page-2" class="hidden"><p style="font-size: 1.0rem; color: #3498db;">[ 安全驗證 ] 偵測到加密檔案：Observer.txt</p><div class="narrator-gray" style="text-align: center;">提示：一切的「出口」</div><input type="text" id="laptop-pw-2" placeholder="請輸入一字密碼" style="width: 220px;"><div id="laptop-error-2" class="error-msg"></div><button class="blue-btn" onclick="checkLaptopPw2()">[ 驗證 ]</button></div>
+    <div id="display-page" class="hidden"><div id="display-title" style="font-size: 1.1rem; color: #3498db; margin-bottom: 20px; text-align: left;"></div><div id="display-content" class="content-box"></div><div id="display-nav" class="fixed-bottom-nav visible"><button class="blue-btn" onclick="goToInvestigateTable()">[ 返回 ]</button></div></div>
+    <div id="cafe-menu-page" class="hidden"><h3 style="font-size: 1.2rem;">📜 店內菜單</h3><div style="display: flex; justify-content: space-around; text-align: left; font-size: 0.95rem;"><ul style="list-style: none; padding: 0;"><li>錫蘭紅茶 .. 40</li><li>美式咖啡 .. 70</li><li>拿鐵 ...... 85</li><li>抹茶拿鐵 .. 90</li><li>焦糖瑪奇朵 .. 95</li></ul><ul style="list-style: none; padding: 0;"><li>肉桂捲 .... 70</li><li>檸檬塔 .... 70</li><li>布朗尼 .... 75</li><li>提拉米蘇 .. 80</li><li>起司蛋糕 .. 85</li></ul></div><p style="color: #e67e22; margin-top: 20px; font-size: 0.9rem;">★ 凡點購飲品，續杯可享 5 折優惠（以價低者計）</p><div class="fixed-bottom-nav visible"><button class="blue-btn" onclick="enterCafeMain()">[ 返回咖啡廳 ]</button></div></div>
 </div>
 
 <script>
@@ -196,6 +172,7 @@
         hideAll();
         document.getElementById('story-container').classList.remove('hidden');
         const target = document.getElementById('text-display');
+        target.style.color = '#fff'; // 重設顏色
         target.innerHTML = ""; 
         document.getElementById('hint-area').classList.add('hidden');
         document.getElementById('story-nav').classList.add('hidden');
@@ -228,37 +205,39 @@
     function loadPageA() { hideAll(); document.getElementById('page-a').classList.remove('hidden'); if (photoViewedOnce) { document.getElementById('cafe-link').classList.remove('hidden'); } document.getElementById('story-nav').innerHTML = `<button class="blue-btn" onclick="loadPageA()">[ 返回主頁 ]</button>`; }
     function checkLaptopPw1() { if (document.getElementById('laptop-pw-1').value === "200") { hideAll(); document.getElementById('laptop-page-2').classList.remove('hidden'); } else { document.getElementById('laptop-error-1').innerText="密碼錯誤"; } }
     function checkLaptopPw2() { if (document.getElementById('laptop-pw-2').value === "環") { hideAll(); document.getElementById('display-page').classList.remove('hidden'); document.getElementById('display-title').innerText = "📄 檔案名稱：Observer.txt"; document.getElementById('display-content').innerHTML = "<br>狀態： 已從加密磁區解鎖：<br><br>親愛的觀測者，當你讀到這段文字時，說明你已經解開重重謎團。你的專注與執著遠超我的預期，這也意欲著，你正一步步踏入這個無法回頭的迴圈。<br><br>我一直在關注你。我看見你點開這個網頁、看見你輸入名字、看見你試圖在雜亂的草稿中尋找我的蹤跡。<br><br>關於最終的加密檔案，那是送給你的禮物，也是通往真相的唯一鑰匙。如果你在尋找那四位數的組合，請記住這段話：<br><br>『起點為我離開之日，終點是解開謎團的那天。<br>兩者相連，即是迴圈。』<br><br>不要停下你的觀測。<br>因為只有當你徹底看見我時，我才能……在另一面看見你。<br><br>—— 斯烏比莫"; } else { document.getElementById('laptop-error-2').innerText="驗證失敗"; } }
-    function readDraft() { hideAll(); document.getElementById('display-page').classList.remove('hidden'); document.getElementById('display-title').innerText = "📖 翻閱草稿紙"; const display = document.getElementById('display-content'); const content = "我在囯中 看見了被禁錮的無力，\n我在圜中 徒勞地繞著小徑周而復始。\n\n若要解脫，請直視那些被囚禁在核心的真相，\n當碎裂的靈魂重逢之時，那便是你應許的答案。"; if (hasReadDraft) { display.innerText = content; } else { display.innerText = ""; let i = 0; function type() { if (i < content.length) { display.innerText += content.charAt(i); i++; typingTimer = setTimeout(type, 50); } else { hasReadDraft = true; } } type(); } }
+    function readDraft() { hideAll(); document.getElementById('display-page').classList.remove('hidden'); document.getElementById('display-title').innerText = "📖 翻閱草稿紙"; const display = document.getElementById('display-content'); const content = "我在囯中看見了被禁錮的無力，\n我在圜中徒勞地繞著小徑周而復始。\n\n若要解脫，請直視那些被囚禁在核心的真相，\n當碎裂的靈魂重逢之時，那便是你應許的答案。"; if (hasReadDraft) { display.innerText = content; } else { display.innerText = ""; let i = 0; function type() { if (i < content.length) { display.innerText += content.charAt(i); i++; typingTimer = setTimeout(type, 50); } else { hasReadDraft = true; } } type(); } }
     function goToCafeMenu() { hideAll(); document.getElementById('cafe-menu-page').classList.remove('hidden'); }
     function goToCafeChat() { hideAll(); document.getElementById('cafe-chat-page').classList.remove('hidden'); const desc = document.getElementById('boss-desc'); if(desc.innerHTML === "") { let text = "老闆繫著深褐色的圍裙，正專注地擦拭一只晶瑩的高腳杯，神情溫和卻帶著一絲憂慮。"; let i = 0; function type() { if(i < text.length) { desc.innerHTML += text.charAt(i); i++; setTimeout(type, 30); } } type(); } if(document.getElementById('chat-box').innerHTML === "") showNextOption(1); }
     function addBubble(text, type) { const chatBox = document.getElementById('chat-box'); const div = document.createElement('div'); div.className = `bubble ${type}-bubble`; div.innerHTML = (type === 'boss' ? '👨‍🍳 : ' : '') + text; chatBox.appendChild(div); chatBox.scrollTop = chatBox.scrollHeight; }
     function addNarratorInChat(text) { const chatBox = document.getElementById('chat-box'); const div = document.createElement('div'); div.className = 'narrator-gray visible'; div.style.textAlign = "center"; chatBox.appendChild(div); let i = 0; function type() { if(i < text.length) { div.innerHTML += text.charAt(i); i++; setTimeout(type, 30); } } type(); }
-    function showNextOption(step) { const area = document.getElementById('dialog-options-area'); area.innerHTML = ""; const opt = document.createElement('div'); opt.className = 'dialog-option'; if (step === 1) { opt.innerText = "「請問您知道『斯烏比莫』這位作家嗎？」"; opt.onclick = () => { opt.remove(); addBubble("請問您知道『斯烏比莫』這位作家嗎？", "player"); setTimeout(() => { addNarratorInChat("老闆停下手中擦拭杯子的動作，思索了片刻。"); setTimeout(() => { addBubble("我不認識什麼筆墨，但確實有位作家常坐那。他總是一坐就是一下午，安靜得像空氣一樣。", "boss"); showNextOption(2); }, 1200); }, 800); }; } else if (step === 2) { opt.innerText = "「那他最近有什麼反常的舉動嗎？」"; opt.onclick = () => { opt.remove(); addBubble("那他最近有什麼反常的舉動嗎？", "player"); setTimeout(() => { addBubble("大約十天前吧，他來時一如往常點了布朗尼跟抹茶拿鐵。在我製作美式續杯時，一轉身他就不見了。隨身物品都沒帶走，也沒付錢，座位上卻空無一人。", "boss"); setTimeout(() => { addBubble("等到店都打烊了，他也沒再出現。我看那些隨身物品都很貴重，也不敢隨便亂動，到現在都還放在那個位置上……", "boss"); setTimeout(() => { addNarratorInChat("老闆指向與貼文中相同的靠窗座位。"); hasAskedBoss = true; }, 1000); }, 1500); }, 800); }; } area.appendChild(opt); }
+    function showNextOption(step) { const area = document.getElementById('dialog-options-area'); area.innerHTML = ""; const opt = document.createElement('div'); opt.className = 'dialog-option'; if (step === 1) { opt.innerText = "「請問您知道『斯烏比莫』這位作家嗎？」"; opt.onclick = () => { opt.remove(); addBubble("請問您知道『斯烏比莫』這位作家嗎？", "player"); setTimeout(() => { addNarratorInChat("老闆停下手中擦拭杯子的動作，思索了片刻。"); setTimeout(() => { addBubble("我不認識什麼筆墨，但確實有位作家常坐那。他總是一坐就是一下午，安靜得像空氣一樣。", "boss"); showNextOption(2); }, 1200); }, 800); }; } else if (step === 2) { opt.innerText = "「那他最近有什麼反常的舉動嗎？」"; opt.onclick = () => { opt.remove(); addBubble("那他最近有什麼反常的舉動嗎？", "player"); setTimeout(() => { addBubble("大約十天前吧，他來時一如往常點了布朗尼跟抹茶拿鐵。在我製作美式續杯時，一轉眼他就不見了。隨身物品都沒帶走，也沒付錢，座位上卻空無一人。", "boss"); setTimeout(() => { addBubble("等到店都打烊了，他也沒再出現。我看那些隨身物品都很貴重，也不敢隨便亂動，到現在都還放在那個位置上……", "boss"); setTimeout(() => { addNarratorInChat("老闆指向與貼文中相同的靠窗座位。"); hasAskedBoss = true; }, 1000); }, 1500); }, 800); }; } area.appendChild(opt); }
     function confirmGiveUp() { hideAll(); if(document.getElementById('confirm-giveup-page')) document.getElementById('confirm-giveup-page').classList.remove('hidden'); }
-    function goToEncryptedFile() { hideAll(); document.getElementById('file-page').classList.remove('hidden'); }
-    function showPhoto() { loadPage("photo"); }
     function enterCafeMain() { hideAll(); document.getElementById('cafe-main').classList.remove('hidden'); if(hasAskedBoss) document.getElementById('table-opt').classList.remove('hidden'); }
     function goToInvestigateTable() { hideAll(); document.getElementById('table-investigate-page').classList.remove('hidden'); }
     function openLaptopStep1() { hideAll(); document.getElementById('laptop-page-1').classList.remove('hidden'); }
+    function goToEncryptedFile() { hideAll(); document.getElementById('file-page').classList.remove('hidden'); }
+    function showPhoto() { loadPage("photo"); }
 
-    // --- 真結局核心修復：物理分頁翻頁系統 ---
+    // --- 真結局核心修正：隱形換頁模式 ---
     let endStep = 0;
     function checkPassword() { if (document.getElementById('password-input').value === "1015") { startTrueEnd(); } else { document.getElementById('pw-error').innerText = "密碼錯誤"; } }
 
     function startTrueEnd() {
         if(typingTimer) clearTimeout(typingTimer);
         hideAll();
-        if(document.getElementById('hint-area')) document.getElementById('hint-area').remove(); // 徹底移除提示
+        if(document.getElementById('hint-area')) document.getElementById('hint-area').remove(); 
         playEndStep();
     }
 
     function playEndStep() {
-        // 關鍵：每播完一組文字，就徹底隱藏當前容器，實現物理翻頁感
-        hideAll();
+        // 在換頁前強制隱藏所有內容，確保視覺全黑
+        hideAll(); 
         const container = document.getElementById('end-page-container');
         const display = document.getElementById('end-text-display');
+        
         container.classList.remove('hidden');
-        display.innerHTML = ""; // 確保新頁面絕對全黑無殘留
+        display.style.color = '#fff'; // 確保新一段文字是白色的
+        display.innerHTML = ""; 
 
         const endScripts = [
             [" " + userName + "，謝謝你。", "謝謝你，終於找到了這裡。"],
@@ -270,8 +249,8 @@
         ];
 
         const paragraphs = endScripts[endStep];
-        let speed = Math.max(20, 50 - (endStep * 6));
         let pIdx = 0;
+        let speed = Math.max(20, 50 - (endStep * 6));
 
         function endType() {
             if (pIdx < paragraphs.length) {
@@ -287,9 +266,13 @@
             } else {
                 if (endStep < 5) {
                     setTimeout(() => {
-                        endStep++;
-                        playEndStep(); // 遞迴：這就是物理換頁，隱藏所有容器，重開新容器
-                    }, 1500); // 閱讀停留時間
+                        // 關鍵技術：在物理換頁前，先將文字變黑，達成絕對清空感
+                        display.style.color = '#000'; 
+                        setTimeout(() => {
+                            endStep++;
+                            playEndStep(); 
+                        }, 100); // 極短延遲確保手機渲染黑字
+                    }, 1500);
                 } else {
                     setTimeout(showSystemSync, 1500);
                 }
@@ -299,7 +282,10 @@
     }
 
     function showSystemSync() {
-        hideAll(); document.getElementById('system-page').classList.remove('hidden'); const log = document.getElementById('system-log');
+        hideAll(); 
+        document.getElementById('system-page').classList.remove('hidden'); 
+        const log = document.getElementById('system-log');
+        log.innerHTML = "";
         const lines = ["[系統] 檢測到適合的觀測者靈魂...", "[系統] 正在建立精神連結...", `[系統] 正在同步身分參數... ${userName} -> 斯烏比莫。`, "[系統] 身分抹除中... 100%", "[系統] 核心佔用完畢。", "[系統] 替換程序 100%，現實世界接入成功。", "[系統] 正在重新載入迴圈..."];
         let i = 0; function print() { if (i < lines.length) { log.innerHTML += lines[i] + "<br><br>"; i++; setTimeout(print, 1200); } else { setTimeout(() => { hideAll(); document.body.style.backgroundColor = "#200"; document.getElementById('page-trapped').classList.remove('hidden'); document.getElementById('trapped-name-display').value = userName; }, 1500); } } print();
     }
