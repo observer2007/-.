@@ -155,7 +155,7 @@
             <ul style="list-style: none; padding: 0;"><li>錫蘭紅茶 .. 40</li><li>美式咖啡 .. 70</li><li>拿鐵 ...... 85</li><li>抹茶拿鐵 .. 90</li><li>焦糖瑪奇朵 .. 95</li></ul>
             <ul style="list-style: none; padding: 0;"><li>肉桂捲 .... 70</li><li>檸檬塔 .... 70</li><li>布朗尼 .... 75</li><li>提拉米蘇 .. 80</li><li>起司蛋糕 .. 85</li></ul>
         </div>
-        <p style="color: #e67e22; margin-top: 20px; font-size: 0.9rem;">★ 凡點購飲品，續杯可享 5 折優惠（以價低者計）</p>
+        <p style="color: #e67e22; margin-top: 20px; font-size: 0.9rem;">★ 凡點購飲品，續杯可享 5 折優惠</p>
         <div class="fixed-bottom-nav visible"><button class="blue-btn" onclick="enterCafeMain()">[ 返回咖啡廳 ]</button></div>
     </div>
 
@@ -181,7 +181,7 @@
 
     const scripts = {
         "prologue": ["斯烏比莫，知名懸疑作家，原定於 10 月 25 日出版新書《迴圈》。", "身為頭號粉絲，你從消息公布時就開始期待。", "但從十天前起，他的社群帳號停止更新，到了預定出版的日期依舊如此......", "你焦慮地不斷重新整理頁面。突然間，斯烏比莫的社群帳號裡，所有公開貼文被清空，只留下一張在咖啡廳的照片貼文，以及一個加密檔案。"],
-        2: ["斯烏比莫，知名懸疑作家，原定於 10 月 25 日出版新書《迴圈》。", "身為頭號粉絲，你從消息公布時就開始期待。", "但從十天前起， his 社群帳號停止更新，到了預定出版的日期依舊如此......"],
+        2: ["斯烏比莫，知名懸疑作家，原定於 10 月 25 日出版新書《迴圈》。", "身為頭號粉絲，你從消息公布時就開始期待。", "但從十天前起，他的社群帳號停止更新，到了預定出版的日期依舊如此......"],
         3: ["你焦慮地不斷重新整理頁面。", "突然間，斯烏比莫的社群帳號裡，所有公開貼文被清空......", "只留下一張在咖啡廳的照片貼文，以及一個名為 <span class='blue-link' onclick='goToEncryptedFile()'>『給讀者』</span> 的加密檔案。"],
         "photo": ["這是一張斯烏比莫在咖啡廳的照片。", "照片中，窗邊位置的桌上放著一張泛黃的草稿紙與一台筆記型電腦。", "照片下方標記著一個地點：單結咖啡廳。"],
         "giveup": ["你最終還是放下了那份好奇。", "隨著瀏覽器分頁的關閉，那些神祕的訊息都成了視窗外逐漸模糊的殘影。", "斯烏比莫這個名字不再出現在你的關注清單，就像那場從未發生的出版計畫，消失在平凡的生活裡……"]
@@ -233,7 +233,7 @@
     function goToCafeChat() { hideAll(); document.getElementById('cafe-chat-page').classList.remove('hidden'); const desc = document.getElementById('boss-desc'); if(desc.innerHTML === "") { let text = "老闆繫著深褐色的圍裙，正專注地擦拭一只晶瑩的高腳杯，神情溫和卻帶著一絲憂慮。"; let i = 0; function type() { if(i < text.length) { desc.innerHTML += text.charAt(i); i++; setTimeout(type, 30); } } type(); } if(document.getElementById('chat-box').innerHTML === "") showNextOption(1); }
     function addBubble(text, type) { const chatBox = document.getElementById('chat-box'); const div = document.createElement('div'); div.className = `bubble ${type}-bubble`; div.innerHTML = (type === 'boss' ? '👨‍🍳 : ' : '') + text; chatBox.appendChild(div); chatBox.scrollTop = chatBox.scrollHeight; }
     function addNarratorInChat(text) { const chatBox = document.getElementById('chat-box'); const div = document.createElement('div'); div.className = 'narrator-gray visible'; div.style.textAlign = "center"; chatBox.appendChild(div); let i = 0; function type() { if(i < text.length) { div.innerHTML += text.charAt(i); i++; setTimeout(type, 30); } } type(); }
-    function showNextOption(step) { const area = document.getElementById('dialog-options-area'); area.innerHTML = ""; const opt = document.createElement('div'); opt.className = 'dialog-option'; if (step === 1) { opt.innerText = "「請問您知道『斯烏比莫』這位作家嗎？」"; opt.onclick = () => { opt.remove(); addBubble("請問您知道『斯烏比莫』這位作家嗎？", "player"); setTimeout(() => { addNarratorInChat("老闆停下手中擦拭杯子的動作，思索了片刻。"); setTimeout(() => { addBubble("我不認識什麼筆墨，但確實有位作家常坐那。他總是一坐就是一下午，安靜得像空氣一樣。", "boss"); showNextOption(2); }, 1200); }, 800); }; } else if (step === 2) { opt.innerText = "「那他最近有什麼反常的舉動嗎？」"; opt.onclick = () => { opt.remove(); addBubble("那他最近有什麼反常的舉動嗎？", "player"); setTimeout(() => { addBubble("大約十天前吧，他來時一如往常點了布朗尼跟抹茶拿鐵。在我製作美式續杯時，一轉眼他就不見了。隨身物品都沒帶走，也沒付錢，座位上卻空無一人。", "boss"); setTimeout(() => { addBubble("等到店都打烊了，他也沒再出現。我看那些隨身物品都很貴重，也不敢隨便亂動，到現在都還放在那個位置上……", "boss"); setTimeout(() => { addNarratorInChat("老闆指向與貼文中相同的靠窗座位。"); hasAskedBoss = true; }, 1000); }, 1500); }, 800); }; } area.appendChild(opt); }
+    function showNextOption(step) { const area = document.getElementById('dialog-options-area'); area.innerHTML = ""; const opt = document.createElement('div'); opt.className = 'dialog-option'; if (step === 1) { opt.innerText = "「請問您知道『斯烏比莫』這位作家嗎？」"; opt.onclick = () => { opt.remove(); addBubble("請問您知道『斯烏比莫』這位作家嗎？", "player"); setTimeout(() => { addNarratorInChat("老闆停下手中擦拭杯子的動作，思索了片刻。"); setTimeout(() => { addBubble("我不認識什麼筆墨，但確實有位作家常坐那。他總是一坐就是一下午，安靜得像空氣一樣。", "boss"); showNextOption(2); }, 1200); }, 800); }; } else if (step === 2) { opt.innerText = "「那他最近有什麼反常的舉動嗎？」"; opt.onclick = () => { opt.remove(); addBubble("那他最近有什麼反常的舉動嗎？", "player"); setTimeout(() => { addBubble("大約十天前吧，他來時一如往常點了布朗尼跟抹茶拿鐵。在我製作美式續杯時，一轉身他就不見了。隨身物品都沒帶走，也沒付錢，座位上卻空無一人。", "boss"); setTimeout(() => { addBubble("等到店都打烊了，他也沒再出現。我看那些隨身物品都很貴重，也不敢隨便亂動，到現在都還放在那個位置上……", "boss"); setTimeout(() => { addNarratorInChat("老闆指向與貼文中相同的靠窗座位。"); hasAskedBoss = true; }, 1000); }, 1500); }, 800); }; } area.appendChild(opt); }
     function confirmGiveUp() { hideAll(); if(document.getElementById('confirm-giveup-page')) document.getElementById('confirm-giveup-page').classList.remove('hidden'); }
     function goToEncryptedFile() { hideAll(); document.getElementById('file-page').classList.remove('hidden'); }
     function showPhoto() { loadPage("photo"); }
