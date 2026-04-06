@@ -145,7 +145,7 @@
 
     <div id="laptop-page-2" class="hidden">
         <p style="font-size: 1.0rem; color: #3498db;">[ 安全驗證 ] 偵測到加密檔案：ToReader.txt</p>
-        <div class="narrator-gray" style="text-align: center;">起點</div>
+        <div class="narrator-gray" style="text-align: center;">迴圈</div>
         <input type="text" id="reader-pw-input" placeholder="4 位數密碼" style="width: 220px; letter-spacing: 5px;">
         <div id="reader-pw-error" class="error-msg"></div>
         <button class="blue-btn" onclick="checkReaderFilePw()">[ 驗證並解鎖檔案 ]</button>
@@ -242,9 +242,9 @@
     function openLaptopStep1() { hideAll(); document.getElementById('laptop-page-1').classList.remove('hidden'); }
     function checkLaptopPw1() { if (document.getElementById('laptop-pw-1').value === "200") { hideAll(); document.getElementById('laptop-page-2').classList.remove('hidden'); } else { document.getElementById('laptop-error-1').innerText="密碼錯誤"; } }
     
-    // 電腦內檔案：給讀者 (1015 解鎖結局)
+    // 電腦內檔案：給讀者 (1525 解鎖結局)
     function checkReaderFilePw() {
-        if (document.getElementById('reader-pw-input').value === "1015") {
+        if (document.getElementById('reader-pw-input').value === "1525") {
             startTrueEnd();
         } else { document.getElementById('reader-pw-error').innerText = "驗證失敗"; }
     }
